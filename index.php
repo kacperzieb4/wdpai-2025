@@ -1,3 +1,3 @@
 <?php
 
-echo "<h1>Hi Students!"
+echo "<h1>Hello world 💪</h1>";
