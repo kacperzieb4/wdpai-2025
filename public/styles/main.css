@@ -1,3 +1,10 @@
 h1 {
     color: green;
 }
+
+body {
+    height: 100vh;
+    margin: 0;
+    
+
+}
