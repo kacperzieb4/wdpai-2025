@@ -1,3 +1,4 @@
+/* Twoje dotychczasowe style */
 h1 {
     color: green;
 }
@@ -5,6 +6,58 @@ h1 {
 body {
     height: 100vh;
     margin: 0;
-    
+    /* Nowe style z wideo */
+    display: flex;
+    flex-direction: column;
+}
 
+/* Style dodane na wideo */
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: lightgray; /* Przykładowy kolor dla widoczności */
+    padding: 0 1rem;
+}
+
+nav ul {
+    display: flex;
+    gap: 1.5rem;
+    list-style-type: none;
+    padding: 0;
+}
+
+.container {
+    display: grid;
+    grid-template-columns: 30% 70%;
+    flex-grow: 1; /* Pozwala kontenerowi zająć resztę wysokości */
+}
+
+aside {
+    background-color: beige; /* Przykładowy kolor */
+}
+
+main {
+    background-color: lightcyan; /* Przykładowy kolor */
+}
+
+/* Media query dla urządzeń mobilnych (wideo ok. 21:00) */
+@media screen and (max-width: 480px) {
+    .container {
+        grid-template-columns: 1fr; /* Jedna kolumna na mobilnych */
+    }
+
+    aside {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 100px; /* Wysokość dolnego paska */
+        background-color: darkkhaki; /* Inny kolor dla paska mobilnego */
+        
+        /* Centrowanie zawartości paska */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
 }

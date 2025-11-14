@@ -2,6 +2,7 @@
 
 require_once 'src/controllers/SecurityController.php';
 require_once 'src/controllers/UserController.php';
+require_once 'src/controllers/DashboardController.php';
 
 class Routing {
 
@@ -13,33 +14,38 @@ class Routing {
         "register" => [
             "controller" => "SecurityController",
             "action" => "register"
+        ],
+        "dashboard" => [
+            "controller" => "DashboardController",
+            "action" => "index"
         ]
     ];
 
     public static function run(string $path) {
         $segments = explode('/', trim($path, '/'));
 
+        // Strona główna
         if (empty($segments[0])) {
-            include 'public/views/dashboard.html';
-            echo "<h2>Dashboard</h2>";
+            $controller = new DashboardController();
+            $controller->index();
             return;
         }
 
         switch ($segments[0]) {
+
             case 'login':
             case 'register':
-                $controller = Routing::$routes[$segments[0]]["controller"];
-                $action = Routing::$routes[$segments[0]]["action"];
-                $controllerObj = new $controller();
-                $controllerObj->$action();
+                $controller = self::$routes[$segments[0]]["controller"];
+                $action = self::$routes[$segments[0]]["action"];
+                $ctrl = new $controller();
+                $ctrl->$action();
                 break;
 
-            case 'user': // dynamiczna ścieżka np. /user/123
+            case 'user':
                 if (isset($segments[1])) {
                     $id = $segments[1];
-                    // Wywołanie kontrolera użytkownika z ID
-                    $controllerObj = new UserController();
-                    $controllerObj->show($id);
+                    $ctrl = new UserController();
+                    $ctrl->show($id);
                 } else {
                     echo "Brak ID!";
                 }
@@ -47,11 +53,7 @@ class Routing {
 
             default:
                 include 'public/views/404.html';
-                echo "<h2>404 - Nie znaleziono strony</h2>";
                 break;
         }
     }
 }
-
-$path = $_SERVER['REQUEST_URI'];
-Routing::run($path);

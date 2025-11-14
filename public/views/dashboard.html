@@ -9,7 +9,31 @@
     <title>dashboard</title>
 </head>
 <body>
-    <h1>Dashboard</h1>
-</body>
+    <nav>
+        <p>LOGO</p>
+        <ul>
+            <li>HOME</li>
+            <li>USERS</li>
+            <li>SETTINGS</li>
+        </ul>
+    </nav>
+    <div class="container">
+        <aside>
+            <p>TOOL 1</p>
+        </aside>
+        <main>
+            <h1>DASHBOARD</h1>
 
+            <?php if(isset($cards)): ?>
+                <?php foreach($cards as $key=>$value): ?>
+                    <div>
+                        <p><?php echo $value['title']; ?></p>
+                        <img src="<?= $value['imageUrlPath']; ?>" alt="Card Image">
+                    </div>
+                <?php endforeach; ?>
+            <?php endif; ?>
+            
+        </main>
+    </div>
+</body>
 </html>
