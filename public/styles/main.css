@@ -61,3 +61,7 @@ main {
         align-items: center;
     }
 }
+.messages {
+    color: red;
+    font-weight: 500;
+}
