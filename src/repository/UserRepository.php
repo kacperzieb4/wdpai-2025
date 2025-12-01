@@ -4,14 +4,55 @@ require_once 'Repository.php';
 
 class UserRepository extends Repository
 {
-
     public function getUsers(): ?array
-{
-    $stmt = $this->database->connect()->prepare('SELECT * FROM users');
-    $stmt->execute();
+    {
+        $query = $this->database->connect()->prepare(
+            "
+                SELECT * FROM users;
+            "
+        );
 
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
-}
+        $query->execute();
 
+        $users = $query->fetchAll(PDO::FETCH_ASSOC);
+        return $users;
+    }
+    public function getUserByEmail(string $email)
+    {
+        $query = $this->database->connect()->prepare(
+            "
+                SELECT * FROM users WHERE email = :email;
+            "
+        );
 
+        $query->bindParam(':email', $email);
+        $query->execute();
+
+        $user = $query->fetch(PDO::FETCH_ASSOC);
+        return $user;
+
+    }
+    public function createUser(
+        string $email, 
+        string $hashedpassword, 
+        string $firstname,
+        string $lastname,
+        string $bio = ' '
+    ){
+        $query = $this->database->connect()->prepare(
+            "
+                INSERT INTO users (firstname, lastname, email, password, bio) 
+                VALUES (?, ?, ?, ?, ?);
+            "
+        );
+
+    $query->execute([
+            $firstname,
+            $lastname,
+            $email,
+            $hashedpassword,
+            $bio,
+        ]);
+
+    }
 }

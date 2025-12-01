@@ -51,6 +51,12 @@ class Routing {
                 }
                 break;
 
+            case 'dashboard':
+                $ctrl = new DashboardController();
+                $ctrl->index();
+                break;
+
+
             default:
                 include 'public/views/404.html';
                 break;

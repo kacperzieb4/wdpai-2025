@@ -2,7 +2,7 @@
 
 // WARTO ZASTOSOWAC ZAMIAST >ENV
 
-const USERNAME = '';
-const PASSWORD = '';
-const HOST = '';
-const DATABASE = '';
+const USERNAME = 'docker';
+const PASSWORD = 'docker';
+const HOST = 'db';
+const DATABASE = 'db';
