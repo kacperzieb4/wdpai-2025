@@ -55,6 +55,11 @@ class Routing {
                 $ctrl = new DashboardController();
                 $ctrl->index();
                 break;
+            
+            case 'logout':
+                $ctrl = new SecurityController();
+                $ctrl->logout();
+                break;
 
 
             default:

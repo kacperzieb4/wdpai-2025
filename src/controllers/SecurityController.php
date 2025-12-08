@@ -30,7 +30,16 @@ class SecurityController extends AppController {
         return $this->render("login", ['messages' => 'Wrong password!']);
     }
 
-    // TODO: create user session, cookie, token
+    session_regenerate_id(true);
+
+    $_SESSION['user_id'] = $user['id'];
+    $_SESSION['user_email'] = $user['email'];
+    $_SESSION['user_firstname'] = $user['firstname'];
+    $_SESSION['is_logged_in'] = true;
+
+    header("Location: /dashboard");
+    exit();
+
 
     $url = "http://" . $_SERVER['HTTP_HOST'];
     header("Location: {$url}/dashboard");
@@ -79,6 +88,33 @@ class SecurityController extends AppController {
         "messages" => ["User registered successfully. Please login!"]
     ]);
 }
+    public function logout()
+{
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
+
+    $_SESSION = [];
+
+    if (ini_get("session.use_cookies")) {
+        $params = session_get_cookie_params();
+        setcookie(
+            session_name(),
+            '',
+            time() - 42000,
+            $params["path"],
+            $params["domain"],
+            $params["secure"],
+            $params["httponly"]
+        );
+    }
+
+    session_destroy();
+
+    header("Location: /login");
+    exit();
+}
+
 
 }
 
