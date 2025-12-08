@@ -18,3 +18,16 @@ VALUES (
     TRUE
 );
  
+CREATE TABLE cards (
+    id SERIAL PRIMARY KEY,
+    title VARCHAR(100) NOT NULL,
+    description VARCHAR(255) NOT NULL,
+    image TEXT NOT NULL
+);
+
+INSERT INTO cards (title, description, image) VALUES
+('Ace of Spades', 'Legendary card', 'https://deckofcardsapi.com/static/img/AS.png'),
+('Queen of Hearts', 'Classic romance', 'https://deckofcardsapi.com/static/img/QH.png'),
+('King of Clubs', 'Royal strength', 'https://deckofcardsapi.com/static/img/KC.png'),
+('Jack of Diamonds', 'Sly and sharp', 'https://deckofcardsapi.com/static/img/JD.png'),
+('Ten of Hearts', 'Lucky draw', 'https://deckofcardsapi.com/static/img/0H.png');

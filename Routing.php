@@ -3,6 +3,8 @@
 require_once 'src/controllers/SecurityController.php';
 require_once 'src/controllers/UserController.php';
 require_once 'src/controllers/DashboardController.php';
+require_once 'src/controllers/CardsController.php';
+
 
 class Routing {
 
@@ -61,6 +63,10 @@ class Routing {
                 $ctrl->logout();
                 break;
 
+            case 'search-cards':
+                $ctrl = new CardsController();
+                $ctrl->search();
+                break;
 
             default:
                 include 'public/views/404.html';
