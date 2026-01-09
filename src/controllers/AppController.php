@@ -41,4 +41,14 @@ class AppController {
             include $templatePath404;
         }
     }
+
+    protected function requireRole(string $role): void
+    {
+        if (empty($_SESSION['user_role']) || $_SESSION['user_role'] !== $role) {
+            http_response_code(403);
+            include 'public/views/403.html';
+            exit();
+        }
+    }
+
 }

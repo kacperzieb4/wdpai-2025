@@ -19,19 +19,19 @@ class UserRepository extends Repository
     }
     public function getUserByEmail(string $email)
     {
-        $query = $this->database->connect()->prepare(
-            "
-                SELECT * FROM users WHERE email = :email;
-            "
+        $stmt = $this->database->connect()->prepare(
+            "SELECT u.*, r.name AS role 
+            FROM users u
+            JOIN roles r ON u.role_id = r.id
+            WHERE email = :email"
         );
 
-        $query->bindParam(':email', $email);
-        $query->execute();
+        $stmt->bindParam(':email', $email, PDO::PARAM_STR);
+        $stmt->execute();
 
-        $user = $query->fetch(PDO::FETCH_ASSOC);
-        return $user;
-
+        return $stmt->fetch(PDO::FETCH_ASSOC);
     }
+
     public function createUser(
         string $email, 
         string $hashedpassword, 

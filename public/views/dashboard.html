@@ -18,6 +18,14 @@
 </header>
 
 <main class="dashboard">
+    <?php if ($_SESSION['user_role'] === 'MODERATOR'): ?>
+        <a href="/moderator">Moderator Panel</a>
+    <?php endif; ?>
+
+    <?php if ($_SESSION['user_role'] === 'ADMIN'): ?>
+        <a href="/admin">Admin Panel</a>
+    <?php endif; ?>
+
     <h1>Hi, <?= $_SESSION['user_firstname'] ?? 'User' ?>!</h1>
     <p>Your files:</p>
 

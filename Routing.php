@@ -4,6 +4,8 @@ require_once 'src/controllers/SecurityController.php';
 require_once 'src/controllers/UserController.php';
 require_once 'src/controllers/DashboardController.php';
 require_once 'src/controllers/CardsController.php';
+require_once 'src/controllers/FileController.php';
+
 
 
 class Routing {
@@ -66,6 +68,21 @@ class Routing {
             case 'search-cards':
                 $ctrl = new CardsController();
                 $ctrl->search();
+                break;
+
+            case 'file':
+                if ($segments[1] === 'comment') {
+                    $ctrl = new FileController();
+                    $ctrl->addComment();
+                } else {
+                    $ctrl = new FileController();
+                    $ctrl->show($segments[1] ?? null);
+                }
+                break;
+
+            case 'admin':
+                $ctrl = new AdminController();
+                $ctrl->index();
                 break;
 
             default:
