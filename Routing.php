@@ -28,10 +28,10 @@ class Routing {
 
         // Strona główna
         if (empty($segments[0])) {
-            $controller = new DashboardController();
-            $controller->index();
+            require 'public/views/home.html';
             return;
         }
+
 
         switch ($segments[0]) {
 

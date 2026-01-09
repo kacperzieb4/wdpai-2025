@@ -4,7 +4,6 @@ class AppController {
 
     public function __construct()
     {
-        // Uruchamiamy sesję, jeśli jeszcze nie działa
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
@@ -22,7 +21,6 @@ class AppController {
 
     protected function requireLogin(): void
     {
-        // Jeśli użytkownik NIE jest zalogowany → przekieruj na login
         if (empty($_SESSION['user_id'])) {
             header("Location: /login");
             exit();
@@ -33,21 +31,14 @@ class AppController {
     {
         $templatePath = 'public/views/'. $template.'.html';
         $templatePath404 = 'public/views/404.html';
-        $output = "";
-        
+
         if (file_exists($templatePath)) {
             extract($variables);
-
             ob_start();
             include $templatePath;
-            $output = ob_get_clean();
-        } 
-        else {
-            ob_start();
+            echo ob_get_clean();
+        } else {
             include $templatePath404;
-            $output = ob_get_clean();
         }
-
-        echo $output;
     }
 }

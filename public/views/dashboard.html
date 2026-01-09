@@ -1,40 +1,38 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="pl">
 <head>
     <meta charset="UTF-8">
+    <title>FINCH – Dashboard</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="public/styles/main.css">
     <link rel="stylesheet" href="public/styles/dashboard.css">
-    <title>dashboard</title>
 </head>
 <body>
-    <nav>
-        <p>LOGO</p>
-        <ul>
-            <li>HOME</li>
-            <li>USERS</li>
-            <li>SETTINGS</li>
-        </ul>
-    </nav>
-    <div class="container">
-        <aside>
-            <p>TOOL 1</p>
-        </aside>
-        <main>
-            <h1>DASHBOARD</h1>
-            <li><a href="/logout">LOGOUT</a></li>
 
-            <?php if(isset($cards)): ?>
-                <?php foreach($cards as $key=>$value): ?>
-                    <div>
-                        <p><?php echo $value['title']; ?></p>
-                        <img src="<?= $value['imageUrlPath']; ?>" alt="Card Image">
-                    </div>
-                <?php endforeach; ?>
-            <?php endif; ?>
-            
-        </main>
+<header class="header">
+    <img src="public/images/logo.png" class="logo">
+    <nav>
+        <a href="#">About</a>
+        <a href="#">Contact</a>
+        <a href="/logout" class="logout-btn">Log out</a>
+    </nav>
+</header>
+
+<main class="dashboard">
+    <h1>Hi, <?= $_SESSION['user_firstname'] ?? 'User' ?>!</h1>
+    <p>Your files:</p>
+
+    <div class="files-list">
+        <div class="file-item">
+            <div class="file-info">🎬 PROJECT_01.mp4</div>
+            <a href="/file/1" class="watch-btn">Watch</a>
+        </div>
+
+        <div class="file-item">
+            <div class="file-info">🎬 EVENT_2025.mp4</div>
+            <a href="/file/2" class="watch-btn">Watch</a>
+        </div>
     </div>
+</main>
+
 </body>
 </html>

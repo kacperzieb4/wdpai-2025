@@ -9,112 +9,108 @@ class SecurityController extends AppController {
 
     public function __construct()
     {
+        parent::__construct();
         $this->userRepository = new UserRepository();
     }
+
     public function login() {
 
-    if (!$this->isPost()) {
-        return $this->render("login");
+        if (!$this->isPost()) {
+            return $this->render("login");
+        }
+
+        $email = $_POST['email'] ?? '';
+        $password = $_POST['password'] ?? '';
+
+        $user = $this->userRepository->getUserByEmail($email);
+
+        if (!$user) {
+            return $this->render("login", ['messages' => ['User not exists!']]);
+        }
+
+        if (!password_verify($password, $user['password'])) {
+            return $this->render("login", ['messages' => ['Wrong password!']]);
+        }
+
+        session_regenerate_id(true);
+
+        $_SESSION['user_id'] = $user['id'];
+        $_SESSION['user_email'] = $user['email'];
+        $_SESSION['user_firstname'] = $user['firstname'];
+        $_SESSION['is_logged_in'] = true;
+
+        header("Location: /dashboard");
+        exit();
     }
-
-    $email = $_POST['email'] ?? '';
-    $password = $_POST['password'] ?? '';
-
-    $user = $this->userRepository->getUserByEmail($email);
-
-    if (!$user) {
-        return $this->render("login", ['messages' => 'User not exists!']);
-    }
-
-    if (!password_verify($password, $user['password'])) {
-        return $this->render("login", ['messages' => 'Wrong password!']);
-    }
-
-    session_regenerate_id(true);
-
-    $_SESSION['user_id'] = $user['id'];
-    $_SESSION['user_email'] = $user['email'];
-    $_SESSION['user_firstname'] = $user['firstname'];
-    $_SESSION['is_logged_in'] = true;
-
-    header("Location: /dashboard");
-    exit();
-
-
-    $url = "http://" . $_SERVER['HTTP_HOST'];
-    header("Location: {$url}/dashboard");
-}
-
-
 
     public function register() {
 
-    if ($this->isGet()) {
-        return $this->render("register");
-    }
+        if ($this->isGet()) {
+            return $this->render("register");
+        }
 
-    $email = $_POST['email'] ?? '';
-    $password = $_POST['password'] ?? '';
-    $password2 = $_POST['password2'] ?? '';
-    $firstname = $_POST['firstName'] ?? '';
-    $lastname = $_POST['lastName'] ?? '';  
-    if(empty($email) || empty($password) || empty($password2) || empty($firstname) || empty($lastname)) {
-        return $this->render('register', [
-            'messages' => ['All fields are required!']
-        ]);
-    }
+        $email = $_POST['email'] ?? '';
+        $password = $_POST['password'] ?? '';
+        $password2 = $_POST['password2'] ?? '';
+        $firstname = $_POST['firstName'] ?? '';
+        $lastname = $_POST['lastName'] ?? '';  
 
-    if ($password !== $password2) {
-        return $this->render("register", [
-            "messages" => ["Passwords do not match!"]
-        ]);
-    }
+        if (empty($email) || empty($password) || empty($password2) || empty($firstname) || empty($lastname)) {
+            return $this->render('register', [
+                'messages' => ['All fields are required!']
+            ]);
+        }
 
-    if ($this->userRepository->getUserByEmail($email)) {
-        return $this->render("register", [
-            "messages" => ["User with this email already exists!"]
-        ]);
-    }
+        if ($password !== $password2) {
+            return $this->render("register", [
+                "messages" => ["Passwords do not match!"]
+            ]);
+        }
 
-    $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
+        if ($this->userRepository->getUserByEmail($email)) {
+            return $this->render("register", [
+                "messages" => ["User with this email already exists!"]
+            ]);
+        }
 
-    $this->userRepository->createUser(
-        $email,
-        $hashedPassword,
-        $firstname,
-        $lastname
-    );
-    return $this->render("login", [
-        "messages" => ["User registered successfully. Please login!"]
-    ]);
-}
-    public function logout()
-{
-    if (session_status() === PHP_SESSION_NONE) {
-        session_start();
-    }
+        $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
 
-    $_SESSION = [];
-
-    if (ini_get("session.use_cookies")) {
-        $params = session_get_cookie_params();
-        setcookie(
-            session_name(),
-            '',
-            time() - 42000,
-            $params["path"],
-            $params["domain"],
-            $params["secure"],
-            $params["httponly"]
+        $this->userRepository->createUser(
+            $email,
+            $hashedPassword,
+            $firstname,
+            $lastname
         );
+
+        return $this->render("login", [
+            "messages" => ["User registered successfully. Please login!"]
+        ]);
     }
 
-    session_destroy();
+    public function logout()
+    {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
 
-    header("Location: /login");
-    exit();
+        $_SESSION = [];
+
+        if (ini_get("session.use_cookies")) {
+            $params = session_get_cookie_params();
+            setcookie(
+                session_name(),
+                '',
+                time() - 42000,
+                $params["path"],
+                $params["domain"],
+                $params["secure"],
+                $params["httponly"]
+            );
+        }
+
+        session_destroy();
+
+        header("Location: /login");
+        exit();
+    }
 }
-
-
-}
-
