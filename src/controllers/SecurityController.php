@@ -28,6 +28,13 @@ class SecurityController extends AppController {
             return $this->render("login", ['messages' => ['User not exists!']]);
         }
 
+        // 🔥 TU JEST BLOKADA NIEAKTYWNYCH KONT
+        if (!$user['is_active']) {
+            return $this->render("login", [
+                'messages' => ['Account is not activated. Check your email for activation code.']
+            ]);
+        }
+
         if (!password_verify($password, $user['password'])) {
             return $this->render("login", ['messages' => ['Wrong password!']]);
         }
@@ -43,6 +50,7 @@ class SecurityController extends AppController {
         header("Location: /dashboard");
         exit();
     }
+
 
     public function register() {
 

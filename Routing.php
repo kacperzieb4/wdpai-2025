@@ -7,6 +7,7 @@ require_once 'src/controllers/CardsController.php';
 require_once 'src/controllers/FileController.php';
 require_once 'src/controllers/ModeratorController.php';
 require_once 'src/controllers/AdminController.php';
+require_once 'src/controllers/RegisterController.php';
 
 
 
@@ -95,6 +96,26 @@ class Routing {
             case 'moderator-create':
                 $ctrl = new ModeratorController();
                 $ctrl->createAssignment();
+                break;
+            
+            case 'moderator-create-company':
+                $ctrl = new ModeratorController();
+                $ctrl->createCompany();
+                break;
+
+            case 'moderator-create-user':
+                $ctrl = new ModeratorController();
+                $ctrl->createUser();
+                break;
+
+            case 'register':
+                $ctrl = new RegisterController();
+                $ctrl->index();
+                break;
+
+            case 'register-submit':
+                $ctrl = new RegisterController();
+                $ctrl->register();
                 break;
 
             default:

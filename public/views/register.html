@@ -1,32 +1,35 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pl">
 <head>
     <meta charset="UTF-8">
+    <title>FINCH – Register</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>REGISTER</title>
-    <link rel="stylesheet" type="text/css" href="public/styles/main.css">
-    <link rel="stylesheet" type="text/css" href="public/styles/login.css">
+    <link rel="stylesheet" href="public/styles/login.css">
 </head>
 <body>
-    <form method="POST" action="/register">
-        <h1>REGISTER FORM</h1>
 
-        <?php if(isset($messages) && !empty($messages)): ?>
-            <div class="messages">
-                <?php foreach ($messages as $msg): ?>
-                    <p><?= $msg ?></p>
-                <?php endforeach; ?>
-            </div>
-        <?php endif; ?>
+<div class="bg-image"></div>
+<div class="overlay"></div>
 
-        <input name="email" type="email" placeholder="Twój email" required>
-        <input name="password" type="password" placeholder="Twoje hasło" required>
-        <input name="password2" type="password" placeholder="Powtórz hasło" required>
+<div class="login-box">
+    <img src="public/images/logo.png" class="login-logo">
 
-        <input name="firstName" type="text" placeholder="Imię" required>
-        <input name="lastName" type="text" placeholder="Nazwisko" required>
+    <?php if (isset($messages)): ?>
+        <div class="messages">
+            <?php foreach ($messages as $msg): ?>
+                <p><?= $msg ?></p>
+            <?php endforeach; ?>
+        </div>
+    <?php endif; ?>
 
-        <button type="submit">REGISTER</button>
+    <form method="POST" action="/register-submit">
+        <input type="email" name="email" placeholder="Email" required>
+        <input type="text" name="code" placeholder="Activation code" required>
+        <input type="password" name="password" placeholder="Password" required>
+        <input type="password" name="password2" placeholder="Repeat password" required>
+        <button type="submit">Activate account</button>
     </form>
+</div>
+
 </body>
 </html>
