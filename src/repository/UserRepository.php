@@ -55,4 +55,14 @@ class UserRepository extends Repository
         ]);
 
     }
+    public function getAllUsers()
+    {
+        $stmt = $this->database->connect()->prepare(
+            "SELECT id, firstname, lastname, email FROM users"
+        );
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
 }

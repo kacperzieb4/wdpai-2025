@@ -5,6 +5,8 @@ require_once 'src/controllers/UserController.php';
 require_once 'src/controllers/DashboardController.php';
 require_once 'src/controllers/CardsController.php';
 require_once 'src/controllers/FileController.php';
+require_once 'src/controllers/ModeratorController.php';
+require_once 'src/controllers/AdminController.php';
 
 
 
@@ -83,6 +85,16 @@ class Routing {
             case 'admin':
                 $ctrl = new AdminController();
                 $ctrl->index();
+                break;
+
+            case 'moderator':
+                $ctrl = new ModeratorController();
+                $ctrl->index();
+                break;
+
+            case 'moderator-create':
+                $ctrl = new ModeratorController();
+                $ctrl->createAssignment();
                 break;
 
             default:

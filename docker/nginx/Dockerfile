@@ -1,8 +1,9 @@
 FROM nginx:1.17.8-alpine
 
-# Copy the public directory
-# COPY ./public/ /app/public/
-COPY . /app/
+# USUWAMY DOMYŚLNY CONFIG
+RUN rm /etc/nginx/conf.d/default.conf
 
-# Copy the nginx config file
-COPY ./docker/nginx/nginx.conf /etc/nginx/conf.d/default.conf
+# KOPIUJEMY NASZ JAKO GŁÓWNY
+COPY ./docker/nginx/nginx.conf /etc/nginx/nginx.conf
+
+COPY . /app/
