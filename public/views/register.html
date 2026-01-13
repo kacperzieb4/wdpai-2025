@@ -2,16 +2,11 @@
 <html lang="pl">
 <head>
     <meta charset="UTF-8">
-<<<<<<< Updated upstream
-    <title>FINCH – Register</title>
-=======
     <title>FINCH – Activate account</title>
->>>>>>> Stashed changes
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="public/styles/login.css">
 </head>
 <body>
-<<<<<<< Updated upstream
 
 <div class="bg-image"></div>
 <div class="overlay"></div>
@@ -33,30 +28,6 @@
         <input type="password" name="password" placeholder="Password" required>
         <input type="password" name="password2" placeholder="Repeat password" required>
         <button type="submit">Activate account</button>
-=======
-
-<div class="bg-image"></div>
-<div class="overlay"></div>
-
-<div class="login-box">
-    <img src="public/images/logo.png" class="login-logo">
-
-    <?php if (isset($messages)): ?>
-        <div class="messages">
-            <?php foreach ($messages as $msg): ?>
-                <p><?= $msg ?></p>
-            <?php endforeach; ?>
-        </div>
-    <?php endif; ?>
-
-    <form method="POST" action="/register">
-        <input type="email" name="email" placeholder="email" required>
-        <input type="text" name="code" placeholder="activation code" required>
-        <input type="password" name="password" placeholder="password" required>
-        <input type="password" name="password2" placeholder="repeat password" required>
-
-        <button type="submit">Activate</button>
->>>>>>> Stashed changes
     </form>
 </div>
 

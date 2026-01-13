@@ -4,42 +4,49 @@
     <meta charset="UTF-8">
     <title>FINCH – Dashboard</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="public/styles/dashboard.css">
+    <link rel="stylesheet" href="/public/styles/dashboard.css">
 </head>
 <body>
 
-<header class="header">
-    <img src="public/images/logo.png" class="logo">
+<header class="top-bar">
+    <div class="logo">FINCH</div>
     <nav>
-        <a href="#">About</a>
-        <a href="#">Contact</a>
-        <a href="/logout" class="logout-btn">Log out</a>
+        <a href="/about">About me</a>
+        <a href="/contact">Contact</a>
+        <a href="/logout" class="logout">Log out</a>
     </nav>
 </header>
 
-<main class="dashboard">
-    <?php if ($_SESSION['user_role'] === 'MODERATOR'): ?>
-        <a href="/moderator">Moderator Panel</a>
+<main class="content">
+
+    <h1>Hi, <?= $_SESSION['user_firstname'] ?>!</h1>
+
+    <?php if($_SESSION['user_role'] !== 'USER'): ?>
+        <div class="admin-panel">
+            <a href="/assignments" class="admin-tile">Manage assignments</a>
+            <a href="/create-user" class="admin-tile">Manage users</a>
+            <a href="/companies" class="admin-tile">Manage companies</a>
+        </div>
     <?php endif; ?>
 
-    <?php if ($_SESSION['user_role'] === 'ADMIN'): ?>
-        <a href="/admin">Admin Panel</a>
-    <?php endif; ?>
-
-    <h1>Hi, <?= $_SESSION['user_firstname'] ?? 'User' ?>!</h1>
-    <p>Your files:</p>
+    <h2>Your assignments:</h2>
 
     <div class="files-list">
-        <div class="file-item">
-            <div class="file-info">🎬 PROJECT_01.mp4</div>
-            <a href="/file/1" class="watch-btn">Watch</a>
-        </div>
+        <?php if(empty($assignments)): ?>
+            <p>No assignments yet.</p>
+        <?php endif; ?>
 
-        <div class="file-item">
-            <div class="file-info">🎬 EVENT_2025.mp4</div>
-            <a href="/file/2" class="watch-btn">Watch</a>
-        </div>
+        <?php foreach($assignments as $a): ?>
+            <div class="file-tile">
+                <div class="file-info">
+                    <span>🎬</span>
+                    <span class="file-name"><?= $a['title'] ?></span>
+                </div>
+                <a href="/assignment/<?= $a['id'] ?>" class="watch-btn">Watch</a>
+            </div>
+        <?php endforeach; ?>
     </div>
+
 </main>
 
 </body>

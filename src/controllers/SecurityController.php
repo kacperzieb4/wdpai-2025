@@ -18,7 +18,7 @@ class SecurityController
             $email = $_POST['email'];
             $password = $_POST['password'];
 
-            $user = $this->userRepository->getUserByEmailWithRole($email);
+            $user = $this->userRepository->getUserByEmail($email);
 
             if (!$user) {
                 $this->render('login', ['messages' => ['User not found']]);
@@ -35,58 +35,20 @@ class SecurityController
                 return;
             }
 
-            // SESJA
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['user_firstname'] = $user['firstname'];
-            $_SESSION['user_role'] = $user['role']; // USER / MODERATOR / ADMIN
+            $_SESSION['user_role'] = $user['role'];
 
             header("Location: /dashboard");
             exit();
         }
 
-<<<<<<< Updated upstream
-        $email = $_POST['email'] ?? '';
-        $password = $_POST['password'] ?? '';
-
-        $user = $this->userRepository->getUserByEmail($email);
-
-        if (!$user) {
-            return $this->render("login", ['messages' => ['User not exists!']]);
-        }
-
-        // 🔥 TU JEST BLOKADA NIEAKTYWNYCH KONT
-        if (!$user['is_active']) {
-            return $this->render("login", [
-                'messages' => ['Account is not activated. Check your email for activation code.']
-            ]);
-        }
-
-        if (!password_verify($password, $user['password'])) {
-            return $this->render("login", ['messages' => ['Wrong password!']]);
-        }
-
-        session_regenerate_id(true);
-
-        $_SESSION['user_id'] = $user['id'];
-        $_SESSION['user_email'] = $user['email'];
-        $_SESSION['user_firstname'] = $user['firstname'];
-        $_SESSION['user_role'] = $user['role'];
-        $_SESSION['is_logged_in'] = true;
-
-        header("Location: /dashboard");
-        exit();
-    }
-
-
-    public function register() {
-=======
         $this->render('login');
     }
 
     public function register()
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
->>>>>>> Stashed changes
 
             $email = $_POST['email'];
             $code = $_POST['code'];

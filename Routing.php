@@ -4,18 +4,14 @@ require_once 'src/controllers/SecurityController.php';
 require_once 'src/controllers/UserController.php';
 require_once 'src/controllers/DashboardController.php';
 require_once 'src/controllers/CardsController.php';
-<<<<<<< Updated upstream
 require_once 'src/controllers/FileController.php';
 require_once 'src/controllers/ModeratorController.php';
 require_once 'src/controllers/AdminController.php';
 require_once 'src/controllers/RegisterController.php';
-=======
 require_once 'src/controllers/CompanyController.php';
 require_once 'src/controllers/AssignmentController.php';
 require_once 'src/controllers/AssignmentViewController.php';
 
-
->>>>>>> Stashed changes
 
 
 
