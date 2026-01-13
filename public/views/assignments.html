@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Assignments</title>
+    <link rel="stylesheet" href="public/styles/dashboard.css">
+    <link rel="stylesheet" href="public/styles/create-user.css">
+</head>
+<body>
+
+<header class="header">
+    <img src="public/images/logo.png" class="logo">
+    <nav>
+        <a href="/dashboard">Dashboard</a>
+        <a href="/logout" class="logout-btn">Logout</a>
+    </nav>
+</header>
+
+<main class="dashboard">
+
+<div class="create-user-container">
+    <h1>Assignments</h1>
+
+    <form method="POST" action="/create-assignment" enctype="multipart/form-data">
+    <input type="text" name="title" placeholder="Title" required>
+    <input type="text" name="description" placeholder="Description">
+
+    <input type="file" name="video" accept="video/*" required>
+
+    <select name="company_id" required>
+        <option value="">Select company</option>
+        <?php foreach($companies as $c): ?>
+            <option value="<?= $c['id'] ?>"><?= $c['name'] ?></option>
+        <?php endforeach; ?>
+    </select>
+
+    <button type="submit">Create assignment</button>
+</form>
+
+
+    <hr><br>
+
+    <h2>Assignment list</h2>
+    <?php foreach($assignments as $a): ?>
+        <p>🎬 <?= $a['title'] ?> (<?= $a['company'] ?>)</p>
+    <?php endforeach; ?>
+
+    <hr><br>
+
+    <h2>Assign to user</h2>
+
+    <form method="POST" action="/assign-assignment">
+        <select name="assignment_id" required>
+            <?php foreach($assignments as $a): ?>
+                <option value="<?= $a['id'] ?>"><?= $a['title'] ?></option>
+            <?php endforeach; ?>
+        </select>
+
+        <select name="user_id" required>
+            <?php foreach($users as $u): ?>
+                <option value="<?= $u['id'] ?>">
+                    <?= $u['firstname'] ?> <?= $u['lastname'] ?>
+                </option>
+            <?php endforeach; ?>
+        </select>
+
+        <button type="submit">Assign</button>
+    </form>
+
+</div>
+
+</main>
+
+</body>
+</html>

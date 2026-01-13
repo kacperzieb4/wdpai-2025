@@ -4,10 +4,18 @@ require_once 'src/controllers/SecurityController.php';
 require_once 'src/controllers/UserController.php';
 require_once 'src/controllers/DashboardController.php';
 require_once 'src/controllers/CardsController.php';
+<<<<<<< Updated upstream
 require_once 'src/controllers/FileController.php';
 require_once 'src/controllers/ModeratorController.php';
 require_once 'src/controllers/AdminController.php';
 require_once 'src/controllers/RegisterController.php';
+=======
+require_once 'src/controllers/CompanyController.php';
+require_once 'src/controllers/AssignmentController.php';
+require_once 'src/controllers/AssignmentViewController.php';
+
+
+>>>>>>> Stashed changes
 
 
 
@@ -25,7 +33,48 @@ class Routing {
         "dashboard" => [
             "controller" => "DashboardController",
             "action" => "index"
-        ]
+        ],
+        "create-user" => [
+            "controller" => "UserController",
+            "action" => "create"
+        ],
+        "companies" => [
+            "controller" => "CompanyController",
+            "action" => "index"
+        ],
+        "create-company" => [
+            "controller" => "CompanyController",
+            "action" => "create"
+        ],
+        "assign-user" => [
+            "controller" => "CompanyController",
+            "action" => "assignUser"
+        ],
+        "assignments" => [
+            "controller" => "AssignmentController",
+            "action" => "index"
+        ],
+        "create-assignment" => [
+            "controller" => "AssignmentController",
+            "action" => "create"
+        ],
+        "assign-assignment" => [
+            "controller" => "AssignmentController",
+            "action" => "assignUser"
+        ],
+        "assignment" => [
+            "controller" => "AssignmentViewController",
+            "action" => "show"
+        ],
+        "add-comment" => [
+            "controller" => "AssignmentViewController",
+            "action" => "addComment"
+        ],
+
+
+
+
+
     ];
 
     public static function run(string $path) {
@@ -72,6 +121,49 @@ class Routing {
                 $ctrl = new CardsController();
                 $ctrl->search();
                 break;
+            
+            case 'create-user':
+                $ctrl = new UserController();
+                $ctrl->create();
+                break;
+
+            case 'companies':
+            $ctrl = new CompanyController();
+            $ctrl->index();
+            break;
+
+        case 'create-company':
+            $ctrl = new CompanyController();
+            $ctrl->create();
+            break;
+
+        case 'assignments':
+            $ctrl = new AssignmentController();
+            $ctrl->index();
+            break;
+
+        case 'create-assignment':
+            $ctrl = new AssignmentController();
+            $ctrl->create();
+            break;
+
+        case 'assign-assignment':
+            $ctrl = new AssignmentController();
+            $ctrl->assignUser();
+            break;
+
+        case 'assignment':
+            $ctrl = new AssignmentViewController();
+            $ctrl->show($segments[1] ?? null);
+            break;
+
+        case 'add-comment':
+            $ctrl = new AssignmentViewController();
+            $ctrl->addComment();
+            break;
+
+
+
 
             case 'file':
                 if ($segments[1] === 'comment') {

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title><?= $assignment['title'] ?></title>
+    <link rel="stylesheet" href="public/styles/dashboard.css">
+    <link rel="stylesheet" href="public/styles/create-user.css">
+</head>
+<body>
+
+<header class="header">
+    <img src="public/images/logo.png" class="logo">
+    <nav>
+        <a href="/dashboard">Dashboard</a>
+        <a href="/logout" class="logout-btn">Logout</a>
+    </nav>
+</header>
+
+<main class="dashboard">
+
+<div class="create-user-container">
+
+    <h1><?= $assignment['title'] ?></h1>
+    <p><?= $assignment['description'] ?></p>
+
+    <video width="100%" controls>
+        <source src="/<?= $assignment['video_path'] ?>" type="video/mp4">
+        Your browser does not support video.
+    </video>
+
+    <hr><br>
+
+    <h2>Comments</h2>
+
+    <?php foreach($comments as $c): ?>
+        <p>
+            <strong><?= $c['firstname'] ?> <?= $c['lastname'] ?></strong><br>
+            <?= $c['content'] ?><br>
+            <small><?= $c['created_at'] ?></small>
+        </p>
+        <hr>
+    <?php endforeach; ?>
+
+    <form method="POST" action="/add-comment">
+        <input type="hidden" name="assignment_id" value="<?= $assignment['id'] ?>">
+        <textarea name="content" placeholder="Write a comment..." required></textarea>
+        <button type="submit">Add comment</button>
+    </form>
+
+</div>
+
+</main>
+
+</body>
+</html>

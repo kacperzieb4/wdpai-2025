@@ -1,0 +1,43 @@
+.create-user-container {
+    max-width: 500px;
+    margin: 60px auto;
+    background: #e0e0e0;
+    padding: 30px 40px;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.create-user-container h1 {
+    margin-bottom: 20px;
+}
+
+.create-user-container input,
+.create-user-container select {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.create-user-container button {
+    width: 100%;
+    padding: 12px;
+    background: #444;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    cursor: pointer;
+}
+
+.create-user-container button:hover {
+    background: #333;
+}
+
+.create-user-container .messages {
+    margin-bottom: 15px;
+    color: green;
+    font-weight: 500;
+}

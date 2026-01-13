@@ -4,21 +4,9 @@ require_once 'Repository.php';
 
 class UserRepository extends Repository
 {
-    public function getUsers(): ?array
-    {
-        $query = $this->database->connect()->prepare(
-            "
-                SELECT * FROM users;
-            "
-        );
-
-        $query->execute();
-
-        $users = $query->fetchAll(PDO::FETCH_ASSOC);
-        return $users;
-    }
     public function getUserByEmail(string $email)
     {
+<<<<<<< Updated upstream
         $stmt = $this->database->connect()->prepare(
             "SELECT u.*, r.name AS role 
             FROM users u
@@ -35,26 +23,75 @@ class UserRepository extends Repository
     public function createUser(
         string $email, 
         string $hashedpassword, 
+=======
+        $stmt = $this->database->connect()->prepare("
+            SELECT * FROM users WHERE email = :email
+        ");
+
+        $stmt->execute([':email' => $email]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function getUserByEmailWithRole(string $email)
+    {
+        $stmt = $this->database->connect()->prepare("
+            SELECT u.*, r.name AS role
+            FROM users u
+            JOIN roles r ON u.role_id = r.id
+            WHERE u.email = :email
+        ");
+
+        $stmt->execute([':email' => $email]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function activateUser(string $email, string $password)
+    {
+        $stmt = $this->database->connect()->prepare("
+            UPDATE users
+            SET password = :password,
+                is_active = true,
+                activation_code = NULL
+            WHERE email = :email
+        ");
+
+        $stmt->execute([
+            ':email' => $email,
+            ':password' => $password
+        ]);
+    }
+
+    public function getRoleIdByName(string $name)
+    {
+        $stmt = $this->database->connect()->prepare("
+            SELECT id FROM roles WHERE name = :name
+        ");
+        $stmt->execute([':name' => $name]);
+        return $stmt->fetchColumn();
+    }
+
+    public function createInactiveUser(
+        string $email,
+>>>>>>> Stashed changes
         string $firstname,
         string $lastname,
-        string $bio = ' '
-    ){
-        $query = $this->database->connect()->prepare(
-            "
-                INSERT INTO users (firstname, lastname, email, password, bio) 
-                VALUES (?, ?, ?, ?, ?);
-            "
-        );
+        int $roleId,
+        string $code
+    ) {
+        $stmt = $this->database->connect()->prepare("
+            INSERT INTO users (email, firstname, lastname, role_id, activation_code, is_active)
+            VALUES (:email, :firstname, :lastname, :role, :code, false)
+        ");
 
-    $query->execute([
-            $firstname,
-            $lastname,
-            $email,
-            $hashedpassword,
-            $bio,
+        $stmt->execute([
+            ':email' => $email,
+            ':firstname' => $firstname,
+            ':lastname' => $lastname,
+            ':role' => $roleId,
+            ':code' => $code
         ]);
-
     }
+<<<<<<< Updated upstream
     public function getAllUsers()
     {
         $stmt = $this->database->connect()->prepare(
@@ -95,6 +132,43 @@ class UserRepository extends Repository
         ]);
 
         return $stmt->rowCount() > 0;
+=======
+
+    public function getUsers(): array
+    {
+        $stmt = $this->database->connect()->prepare("
+            SELECT u.*, r.name AS role
+            FROM users u
+            JOIN roles r ON u.role_id = r.id
+            ORDER BY u.id
+        ");
+
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getAllUsers()
+    {
+        $stmt = $this->database->connect()->prepare("
+            SELECT u.id, u.firstname, u.lastname, u.email, c.name AS company
+            FROM users u
+            LEFT JOIN companies c ON u.company_id = c.id
+            ORDER BY u.id
+        ");
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function assignUserToCompany(int $userId, int $companyId)
+    {
+        $stmt = $this->database->connect()->prepare("
+            UPDATE users SET company_id = :company WHERE id = :id
+        ");
+        $stmt->execute([
+            ':company' => $companyId,
+            ':id' => $userId
+        ]);
+>>>>>>> Stashed changes
     }
 
 

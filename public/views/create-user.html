@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Create User</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Style dashboardu -->
+    <link rel="stylesheet" href="public/styles/dashboard.css">
+    <!-- Style formularza -->
+    <link rel="stylesheet" href="public/styles/create-user.css">
+</head>
+<body>
+
+<header class="header">
+    <img src="public/images/logo.png" class="logo">
+    <nav>
+        <a href="/dashboard">Dashboard</a>
+        <a href="/logout" class="logout-btn">Logout</a>
+    </nav>
+</header>
+
+<main class="dashboard">
+
+    <div class="create-user-container">
+        <h1>Create new user</h1>
+
+        <?php if(isset($messages)): ?>
+            <div class="messages">
+                <?php foreach($messages as $msg): ?>
+                    <p><?= $msg ?></p>
+                <?php endforeach; ?>
+            </div>
+        <?php endif; ?>
+
+        <form method="POST" action="/create-user">
+            <input type="text" name="firstname" placeholder="First name" required>
+            <input type="text" name="lastname" placeholder="Last name" required>
+            <input type="email" name="email" placeholder="Email" required>
+
+            <select name="role" required>
+                <option value="USER">User</option>
+                <option value="MODERATOR">Moderator</option>
+            </select>
+
+            <button type="submit">Create user</button>
+        </form>
+    </div>
+
+</main>
+
+</body>
+</html>
