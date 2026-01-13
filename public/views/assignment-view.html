@@ -3,51 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <title><?= $assignment['title'] ?></title>
-    <link rel="stylesheet" href="public/styles/dashboard.css">
-    <link rel="stylesheet" href="public/styles/create-user.css">
+    <link rel="stylesheet" href="public/styles/assignment.css">
 </head>
 <body>
 
-<header class="header">
-    <img src="public/images/logo.png" class="logo">
+<header class="top-bar">
+    <div class="logo">FINCH</div>
     <nav>
-        <a href="/dashboard">Dashboard</a>
-        <a href="/logout" class="logout-btn">Logout</a>
+        <a href="#">About me</a>
+        <a href="#">Contact</a>
+        <a href="/logout" class="logout">Log out</a>
     </nav>
 </header>
 
-<main class="dashboard">
+<main class="assignment-wrapper">
 
-<div class="create-user-container">
+    <h1 class="file-title"><?= $assignment['title'] ?></h1>
 
-    <h1><?= $assignment['title'] ?></h1>
-    <p><?= $assignment['description'] ?></p>
+    <div class="video-box">
+        <video controls>
+            <source src="/<?= $assignment['video_path'] ?>" type="video/mp4">
+        </video>
+    </div>
 
-    <video width="100%" controls>
-        <source src="/<?= $assignment['video_path'] ?>" type="video/mp4">
-        Your browser does not support video.
-    </video>
+    <div class="comment-box">
+        <h3>New Comment:</h3>
 
-    <hr><br>
+        <form method="POST" action="/add-comment">
+            <input type="hidden" name="assignment_id" value="<?= $assignment['id'] ?>">
 
-    <h2>Comments</h2>
+            <div class="comment-row">
+                <input type="text" name="timestamp" placeholder="00:00" class="time">
+                <input type="text" name="content" placeholder="Your comment..." class="comment-input" required>
+            </div>
 
-    <?php foreach($comments as $c): ?>
-        <p>
-            <strong><?= $c['firstname'] ?> <?= $c['lastname'] ?></strong><br>
-            <?= $c['content'] ?><br>
-            <small><?= $c['created_at'] ?></small>
-        </p>
-        <hr>
-    <?php endforeach; ?>
-
-    <form method="POST" action="/add-comment">
-        <input type="hidden" name="assignment_id" value="<?= $assignment['id'] ?>">
-        <textarea name="content" placeholder="Write a comment..." required></textarea>
-        <button type="submit">Add comment</button>
-    </form>
-
-</div>
+            <button type="submit" class="comment-btn">Add comment</button>
+        </form>
+    </div>
 
 </main>
 

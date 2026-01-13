@@ -17,11 +17,16 @@ class DashboardController extends AppController {
     {
         $this->requireLogin();
 
-        $assignments = $this->assignmentRepo
-            ->getUserAssignments($_SESSION['user_id']);
+        if ($_SESSION['user_role'] === 'USER') {
+            $assignments = $this->assignmentRepo
+                ->getUserAssignments($_SESSION['user_id']);
+        } else {
+            $assignments = $this->assignmentRepo->getAll();
+        }
 
         $this->render('dashboard', [
             'assignments' => $assignments
         ]);
     }
+
 }

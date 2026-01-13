@@ -1,0 +1,89 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #fff;
+}
+
+.top-bar {
+    background: #9e9e9e;
+    padding: 15px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.top-bar .logo {
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.top-bar nav a {
+    color: black;
+    margin-left: 20px;
+    text-decoration: none;
+}
+
+.logout {
+    background: #777;
+    padding: 6px 12px;
+    border-radius: 6px;
+}
+
+.assignment-wrapper {
+    max-width: 800px;
+    margin: 50px auto;
+    text-align: center;
+}
+
+.file-title {
+    font-size: 36px;
+    margin-bottom: 30px;
+}
+
+.video-box video {
+    width: 100%;
+    max-width: 600px;
+    border-radius: 10px;
+    background: #000;
+}
+
+.comment-box {
+    margin-top: 40px;
+    text-align: left;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.comment-box h3 {
+    margin-bottom: 10px;
+}
+
+.comment-row {
+    display: flex;
+    gap: 10px;
+}
+
+.time {
+    width: 80px;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #aaa;
+    text-align: center;
+}
+
+.comment-input {
+    flex: 1;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #aaa;
+}
+
+.comment-btn {
+    margin-top: 15px;
+    padding: 10px 20px;
+    background: #bdbdbd;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
