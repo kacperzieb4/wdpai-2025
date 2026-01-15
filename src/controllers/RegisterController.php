@@ -21,27 +21,44 @@ class RegisterController extends AppController {
     public function register()
     {
         $email = $_POST['email'];
-        $password = $_POST['password'];
-        $password2 = $_POST['password2'];
         $code = $_POST['code'];
+        $pass1 = $_POST['password'];
+        $pass2 = $_POST['password2'];
 
-        if ($password !== $password2) {
-            $messages[] = "Passwords do not match.";
-            require 'public/views/register.html';
+        if ($pass1 !== $pass2) {
+            $messages[] = "Passwords do not match";
+            include 'public/views/register.html';
             return;
         }
 
-        $hash = password_hash($password, PASSWORD_BCRYPT);
+        $db = (new Database())->connect();
 
-        $success = $this->userRepo->activateUser($email, $code, $hash);
+        $stmt = $db->prepare("
+            SELECT * FROM users 
+            WHERE email = ? 
+            AND activation_code = ?
+            AND is_active = false
+        ");
+        $stmt->execute([$email, $code]);
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if (!$success) {
-            $messages[] = "Invalid activation code or email.";
-            require 'public/views/register.html';
+        if (!$user) {
+            $messages[] = "Invalid activation code or account already active";
+            include 'public/views/register.html';
             return;
         }
 
-        header("Location: /login");
-        exit();
+        $hash = password_hash($pass1, PASSWORD_DEFAULT);
+
+        $stmt = $db->prepare("
+            UPDATE users 
+            SET password = ?, is_active = true, activation_code = NULL 
+            WHERE id = ?
+        ");
+        $stmt->execute([$hash, $user['id']]);
+
+        $messages[] = "Account activated! You can now log in.";
+        include 'public/views/login.html';
     }
+
 }

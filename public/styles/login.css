@@ -52,3 +52,25 @@ body, html {
     border-radius: 8px;
     cursor: pointer;
 }
+
+.activate-link {
+    margin-top: 20px;
+    font-size: 14px;
+    text-align: center;
+}
+
+.activate-link a {
+    color: white !important;
+    text-decoration: none !important;
+    font-size: 16px;
+    font-weight: normal;
+    opacity: 1;
+}
+
+
+.activate-link a:hover {
+    opacity: 1;
+    text-decoration: underline !important;
+}
+
+

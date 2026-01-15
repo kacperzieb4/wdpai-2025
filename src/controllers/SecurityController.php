@@ -26,9 +26,11 @@ class SecurityController
             }
 
             if (!$user['is_active']) {
-                $this->render('login', ['messages' => ['Activate your account first']]);
+                $messages[] = "Account not activated yet.";
+                include 'public/views/login.html';
                 return;
             }
+
 
             if (!password_verify($password, $user['password'])) {
                 $this->render('login', ['messages' => ['Wrong password']]);

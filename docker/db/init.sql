@@ -149,12 +149,11 @@ CREATE TABLE IF NOT EXISTS users (
     activation_code VARCHAR(100),
     is_active BOOLEAN DEFAULT TRUE
 );
-
 -- Hasło: admin123
 INSERT INTO users (email, password, firstname, lastname, role_id, company_id, is_active)
 VALUES (
     'admin@finch.pl',
-    '$2y$10$e0MYzXyjpJS7Pd0RVvHwHeFQ5Rk5fYhK6m4G8M9p1U8G3s6C0KJ4a',
+    '$2a$12$fB2uG.TlFNStF8oc1ergQuZr/IU1XDOWkgMbYb21DprkRULce31my',
     'Finch',
     'Admin',
     (SELECT id FROM roles WHERE name='ADMIN'),
@@ -166,7 +165,7 @@ VALUES (
 INSERT INTO users (email, password, firstname, lastname, role_id, company_id, is_active)
 VALUES (
     'moderator@finch.pl',
-    '$2y$10$QeW4qK0V9Fh8KkFhGJ7Z3eJ0uU8c7UqgW6Uu8KZPq5U6xQnF3qKQ6',
+    '$2a$12$fB2uG.TlFNStF8oc1ergQuZr/IU1XDOWkgMbYb21DprkRULce31my',
     'Finch',
     'Moderator',
     (SELECT id FROM roles WHERE name='MODERATOR'),
@@ -178,7 +177,7 @@ VALUES (
 INSERT INTO users (email, password, firstname, lastname, role_id, company_id, is_active)
 VALUES (
     'user@finch.pl',
-    '$2y$10$ZsQ7Yy0QvH9rM9H6Q1Z8Xe4R7X6JpB8N9T1J0YyG5E0J3Q3OQO9wK',
+    '$2a$12$fB2uG.TlFNStF8oc1ergQuZr/IU1XDOWkgMbYb21DprkRULce31my',
     'John',
     'User',
     (SELECT id FROM roles WHERE name='USER'),

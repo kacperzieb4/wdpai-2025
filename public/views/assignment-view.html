@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title><?= $assignment['title'] ?></title>
-    <link rel="stylesheet" href="public/styles/assignment.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/public/styles/assignment.css">
 </head>
 <body>
 
@@ -18,23 +19,26 @@
 
 <main class="assignment-wrapper">
 
+    <!-- 1. NAZWA Z BAZY -->
     <h1 class="file-title"><?= $assignment['title'] ?></h1>
 
+    <!-- 2. VIDEO NA ŚRODKU -->
     <div class="video-box">
         <video controls>
             <source src="/<?= $assignment['video_path'] ?>" type="video/mp4">
         </video>
     </div>
 
+    <!-- 3. KOMENTARZ Z MARGINESAMI -->
     <div class="comment-box">
         <h3>New Comment:</h3>
 
-        <form method="POST" action="/add-comment">
+        <form method="POST" action="/add-comment" class="comment-form">
             <input type="hidden" name="assignment_id" value="<?= $assignment['id'] ?>">
 
             <div class="comment-row">
-                <input type="text" name="timestamp" placeholder="00:00" class="time">
-                <input type="text" name="content" placeholder="Your comment..." class="comment-input" required>
+                <input type="text" name="timestamp" placeholder="00 : 00" class="time">
+                <input type="text" name="content" placeholder="Your comment" class="comment-input" required>
             </div>
 
             <button type="submit" class="comment-btn">Add comment</button>
