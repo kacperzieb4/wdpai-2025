@@ -19,33 +19,69 @@
 
 <main class="assignment-wrapper">
 
-    <!-- 1. NAZWA Z BAZY -->
     <h1 class="file-title"><?= $assignment['title'] ?></h1>
 
-    <!-- 2. VIDEO NA ŚRODKU -->
     <div class="video-box">
-        <video controls>
+        <video id="assignmentVideo" controls>
             <source src="/<?= $assignment['video_path'] ?>" type="video/mp4">
         </video>
     </div>
 
-    <!-- 3. KOMENTARZ Z MARGINESAMI -->
-    <div class="comment-box">
-        <h3>New Comment:</h3>
+    <?php if (!empty($assignment['description'])): ?>
+        <h3 class="section-title">Description:</h3>
+        <div class="assignment-description">
+            <?= nl2br(htmlspecialchars($assignment['description'])) ?>
+        </div>
+    <?php endif; ?>
 
-        <form method="POST" action="/add-comment" class="comment-form">
+    <!-- NEW COMMENT -->
+    <div class="comment new-comment">
+        <h3 class="section-title">New Comment:</h3>
+
+        <form method="POST" action="/add-comment">
             <input type="hidden" name="assignment_id" value="<?= $assignment['id'] ?>">
+            <input type="hidden" name="video_timestamp" id="timestampInput">
+
+            <label class="timestamp-toggle">
+                <input type="checkbox" id="withTimestamp">
+                With timestamp
+            </label>
 
             <div class="comment-row">
-                <input type="text" name="timestamp" placeholder="00 : 00" class="time">
-                <input type="text" name="content" placeholder="Your comment" class="comment-input" required>
+                <input type="text" name="content" class="comment-input" placeholder="Your comment" required>
             </div>
 
             <button type="submit" class="comment-btn">Add comment</button>
         </form>
     </div>
 
+    <!-- COMMENTS -->
+    <h3 class="section-title">Comments:</h3>
+
+    <?php if (empty($comments)): ?>
+        <p>No comments yet.</p>
+    <?php endif; ?>
+
+    <?php foreach ($comments as $comment): ?>
+        <div class="comment">
+            <strong><?= htmlspecialchars($comment['user_name']) ?></strong><br>
+
+            <?php if ($comment['video_timestamp'] !== null): ?>
+                <div 
+                    class="comment-timestamp clickable"
+                    data-seconds="<?= $comment['video_timestamp'] ?>"
+                >
+                    ⏱ <?= gmdate('i:s', $comment['video_timestamp']) ?>
+                </div>
+            <?php endif; ?>
+
+            <small><?= date('Y-m-d H:i:s', strtotime($comment['created_at'])) ?></small>
+            <p><?= htmlspecialchars($comment['content']) ?></p>
+        </div>
+    <?php endforeach; ?>
+
 </main>
 
+<script src="/public/scripts/assignment.js"></script>
 </body>
 </html>

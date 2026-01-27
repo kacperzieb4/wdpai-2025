@@ -37,6 +37,23 @@ class AssignmentController
 
     public function create()
     {
+        // opcjonalnie: blokada dla USER
+        if ($_SESSION['user_role'] === 'USER') {
+            include 'public/views/403.html';
+            return;
+        }
+
+        // ===== GET – pokaż formularz =====
+        if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+            $companies = $this->companyRepository->getAll();
+
+            $this->render('create-assignment', [
+                'companies' => $companies
+            ]);
+            return;
+        }
+
+        // ===== POST – zapisz assignment =====
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $title = $_POST['title'];
@@ -65,6 +82,7 @@ class AssignmentController
             exit();
         }
     }
+
 
 
     public function assignUser()

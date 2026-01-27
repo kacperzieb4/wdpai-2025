@@ -113,20 +113,21 @@ INSERT INTO assignment_users VALUES
 (2, 3);
 
 -- =========================
--- COMMENTS
+-- COMMENTS (VIDEO TIMESTAMP)
 -- =========================
 CREATE TABLE comments (
     id SERIAL PRIMARY KEY,
     assignment_id INT REFERENCES assignments(id) ON DELETE CASCADE,
     user_id INT REFERENCES users(id) ON DELETE CASCADE,
     content TEXT NOT NULL,
+    video_timestamp INT, -- sekundy wideo
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-INSERT INTO comments (assignment_id, user_id, content)
+INSERT INTO comments (assignment_id, user_id, content, video_timestamp)
 VALUES
-(1, 3, 'Great footage, will start editing!'),
-(1, 2, 'Make sure to follow brand guidelines.');
+(1, 3, 'Great footage, will start editing!', 12),
+(1, 2, 'Make sure to follow brand guidelines.', NULL);
 
 -- =========================
 -- VIEWS
@@ -160,6 +161,7 @@ RETURNS TABLE(
     comment_id INT,
     content TEXT,
     created_at TIMESTAMP,
+    video_timestamp INT,
     user_name TEXT
 )
 AS $$
@@ -169,11 +171,12 @@ BEGIN
         c.id,
         c.content,
         c.created_at,
+        c.video_timestamp,
         u.firstname || ' ' || u.lastname
     FROM comments c
     JOIN users u ON c.user_id = u.id
     WHERE c.assignment_id = a_id
-    ORDER BY c.created_at;
+    ORDER BY c.created_at DESC;
 END;
 $$ LANGUAGE plpgsql;
 

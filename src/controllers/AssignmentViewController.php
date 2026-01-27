@@ -1,49 +1,64 @@
 <?php
 
-require_once 'src/repository/AssignmentViewRepository.php';
+require_once 'Database.php';
 
 class AssignmentViewController
 {
-    private $repo;
-
-    public function __construct()
-    {
-        $this->repo = new AssignmentViewRepository();
-    }
-
     public function show($id)
     {
         if (!$id) {
-            header("Location: /dashboard");
-            exit();
+            die('Brak ID assignmentu');
         }
 
-        $assignment = $this->repo->getAssignment($id);
-        $comments = $this->repo->getComments($id);
+        $db = new Database();
+        $conn = $db->connect();
 
-        $this->render('assignment-view', [
-            'assignment' => $assignment,
-            'comments' => $comments
-        ]);
+        // ASSIGNMENT
+        $stmt = $conn->prepare("
+            SELECT * FROM assignments WHERE id = :id
+        ");
+        $stmt->execute(['id' => $id]);
+        $assignment = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$assignment) {
+            die('Assignment not found');
+        }
+
+        // COMMENTS
+        $stmt = $conn->prepare("
+            SELECT 
+                c.content,
+                c.created_at,
+                c.video_timestamp,
+                u.firstname || ' ' || u.lastname AS user_name
+            FROM comments c
+            JOIN users u ON c.user_id = u.id
+            WHERE c.assignment_id = :id
+            ORDER BY c.created_at DESC
+        ");
+        $stmt->execute(['id' => $id]);
+        $comments = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        require 'public/views/assignment-view.html';
     }
 
     public function addComment()
     {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $this->repo->addComment(
-                $_POST['assignment_id'],
-                $_SESSION['user_id'],
-                $_POST['content']
-            );
+        $db = new Database();
+        $conn = $db->connect();
 
-            header("Location: /assignment/" . $_POST['assignment_id']);
-            exit();
-        }
-    }
+        $stmt = $conn->prepare("
+            INSERT INTO comments (assignment_id, user_id, content, video_timestamp)
+            VALUES (:assignment_id, :user_id, :content, :video_timestamp)
+        ");
 
-    private function render(string $view, array $params = [])
-    {
-        extract($params);
-        include "public/views/$view.html";
+        $stmt->execute([
+            'assignment_id' => $_POST['assignment_id'],
+            'user_id' => $_SESSION['user_id'],
+            'content' => $_POST['content'],
+            'video_timestamp' => $_POST['video_timestamp'] !== '' ? $_POST['video_timestamp'] : null
+        ]);
+
+        header('Location: /assignment/' . $_POST['assignment_id']);
     }
 }
