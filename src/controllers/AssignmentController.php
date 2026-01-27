@@ -85,4 +85,16 @@ class AssignmentController
         extract($params);
         include "public/views/$view.html";
     }
+
+    public function edit($id)
+    {
+        $assignment = $this->assignmentRepository->find($id);
+        $companies = $this->companyRepository->getAll();
+
+        $this->render('edit-assignment', [
+            'assignment' => $assignment,
+            'companies' => $companies
+        ]);
+    }
+
 }

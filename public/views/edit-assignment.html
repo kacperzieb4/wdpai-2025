@@ -1,0 +1,19 @@
+<h1>Edit assignment</h1>
+
+<form method="POST" action="/edit-assignment/<?= $assignment['id'] ?>" enctype="multipart/form-data">
+    <input type="text" name="title" value="<?= $assignment['title'] ?>" required>
+    <input type="text" name="description" value="<?= $assignment['description'] ?>">
+
+    <input type="file" name="video" accept="video/*">
+
+    <select name="company_id">
+        <?php foreach($companies as $c): ?>
+            <option value="<?= $c['id'] ?>"
+                <?= $c['id'] == $assignment['company_id'] ? 'selected' : '' ?>>
+                <?= $c['name'] ?>
+            </option>
+        <?php endforeach; ?>
+    </select>
+
+    <button type="submit">Save changes</button>
+</form>

@@ -206,6 +206,12 @@ class Routing {
                 $ctrl->register();
                 break;
 
+            case 'edit-assignment':
+                $ctrl = new AssignmentController();
+                $ctrl->edit($segments[1] ?? null);
+                break;
+
+
             default:
                 include 'public/views/404.html';
                 break;

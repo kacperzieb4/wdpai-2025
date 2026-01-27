@@ -3,71 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <title>Assignments</title>
-    <link rel="stylesheet" href="public/styles/dashboard.css">
-    <link rel="stylesheet" href="public/styles/create-user.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="/public/styles/dashboard.css">
 </head>
 <body>
 
-<header class="header">
-    <img src="public/images/logo.png" class="logo">
+<header class="top-bar">
+    <div class="logo">FINCH</div>
     <nav>
         <a href="/dashboard">Dashboard</a>
-        <a href="/logout" class="logout-btn">Logout</a>
+        <a href="/logout" class="logout">Log out</a>
     </nav>
 </header>
 
-<main class="dashboard">
+<main class="content">
 
-<div class="create-user-container">
+    <!-- TYTUŁ -->
     <h1>Assignments</h1>
 
-    <form method="POST" action="/create-assignment" enctype="multipart/form-data">
-    <input type="text" name="title" placeholder="Title" required>
-    <input type="text" name="description" placeholder="Description">
+    <!-- CREATE ASSIGNMENT -->
+    <div class="admin-panel">
+        <a href="/create-assignment" class="admin-tile">
+            ➕ Create assignment
+        </a>
+    </div>
 
-    <input type="file" name="video" accept="video/*" required>
+    <!-- LISTA -->
+    <h2>Actual assignments:</h2>
 
-    <select name="company_id" required>
-        <option value="">Select company</option>
-        <?php foreach($companies as $c): ?>
-            <option value="<?= $c['id'] ?>"><?= $c['name'] ?></option>
+    <div class="files-list">
+        <?php foreach ($assignments as $a): ?>
+            <div class="file-tile">
+                <div class="file-info">
+                    <span>🎬</span>
+                    <span class="file-name"><?= $a['title'] ?></span>
+                </div>
+
+                <div>
+                    <a href="/assignment/<?= $a['id'] ?>" class="watch-btn">View</a>
+                    <a href="/edit-assignment/<?= $a['id'] ?>" class="watch-btn">Edit</a>
+                </div>
+            </div>
         <?php endforeach; ?>
-    </select>
-
-    <button type="submit">Create assignment</button>
-</form>
-
-
-    <hr><br>
-
-    <h2>Assignment list</h2>
-    <?php foreach($assignments as $a): ?>
-        <p>🎬 <?= $a['title'] ?> (<?= $a['company'] ?>)</p>
-    <?php endforeach; ?>
-
-    <hr><br>
-
-    <h2>Assign to user</h2>
-
-    <form method="POST" action="/assign-assignment">
-        <select name="assignment_id" required>
-            <?php foreach($assignments as $a): ?>
-                <option value="<?= $a['id'] ?>"><?= $a['title'] ?></option>
-            <?php endforeach; ?>
-        </select>
-
-        <select name="user_id" required>
-            <?php foreach($users as $u): ?>
-                <option value="<?= $u['id'] ?>">
-                    <?= $u['firstname'] ?> <?= $u['lastname'] ?>
-                </option>
-            <?php endforeach; ?>
-        </select>
-
-        <button type="submit">Assign</button>
-    </form>
-
-</div>
+    </div>
 
 </main>
 
