@@ -4,48 +4,79 @@
     <meta charset="UTF-8">
     <title>Create User</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <!-- Style dashboardu -->
-    <link rel="stylesheet" href="public/styles/dashboard.css">
-    <!-- Style formularza -->
-    <link rel="stylesheet" href="public/styles/create-user.css">
+    <link rel="stylesheet" href="/public/styles/create-user.css">
 </head>
 <body>
 
-<header class="header">
-    <img src="public/images/logo.png" class="logo">
+<header class="top-bar">
+    <div class="logo">FINCH</div>
     <nav>
         <a href="/dashboard">Dashboard</a>
-        <a href="/logout" class="logout-btn">Logout</a>
+        <a href="/logout" class="logout">Log out</a>
     </nav>
 </header>
 
-<main class="dashboard">
+<main class="content">
 
-    <div class="create-user-container">
-        <h1>Create new user</h1>
+    <h1 class="page-title">Create User</h1>
 
-        <?php if(isset($messages)): ?>
-            <div class="messages">
-                <?php foreach($messages as $msg): ?>
-                    <p><?= $msg ?></p>
-                <?php endforeach; ?>
-            </div>
-        <?php endif; ?>
-
+    <!-- FORM CARD -->
+    <div class="card">
         <form method="POST" action="/create-user">
-            <input type="text" name="firstname" placeholder="First name" required>
-            <input type="text" name="lastname" placeholder="Last name" required>
-            <input type="email" name="email" placeholder="Email" required>
 
-            <select name="role" required>
-                <option value="USER">User</option>
-                <option value="MODERATOR">Moderator</option>
+            <input
+                type="email"
+                name="email"
+                placeholder="Email address"
+                required
+            >
+
+            <input
+                type="text"
+                name="firstname"
+                placeholder="First name"
+            >
+
+            <input
+                type="text"
+                name="lastname"
+                placeholder="Last name"
+            >
+
+            <select name="role_id" required>
+                <option value="" disabled selected>
+                    Select role
+                </option>
+                <?php foreach ($roles as $role): ?>
+                    <option value="<?= $role['id'] ?>">
+                        <?= htmlspecialchars($role['name']) ?>
+                    </option>
+                <?php endforeach; ?>
             </select>
 
-            <button type="submit">Create user</button>
+            <select name="company_id">
+                <option value="">
+                    Company (optional)
+                </option>
+                <?php foreach ($companies as $company): ?>
+                    <option value="<?= $company['id'] ?>">
+                        <?= htmlspecialchars($company['name']) ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+
+            <button type="submit" class="btn-primary">
+                Create user
+            </button>
         </form>
     </div>
+
+    <!-- SUCCESS MESSAGE -->
+    <?php if (!empty($successMessage)): ?>
+        <div class="success-box">
+            <?= htmlspecialchars($successMessage) ?>
+        </div>
+    <?php endif; ?>
 
 </main>
 

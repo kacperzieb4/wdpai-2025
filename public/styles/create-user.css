@@ -1,43 +1,107 @@
-.create-user-container {
-    max-width: 500px;
-    margin: 60px auto;
-    background: #e0e0e0;
-    padding: 30px 40px;
-    border-radius: 16px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #fff;
 }
 
-.create-user-container h1 {
-    margin-bottom: 20px;
+/* HEADER */
+.top-bar {
+    background: #9e9e9e;
+    padding: 12px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
-.create-user-container input,
-.create-user-container select {
-    width: 100%;
-    padding: 12px;
-    margin-bottom: 15px;
-    border: none;
+.logo {
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.top-bar nav a {
+    margin-left: 20px;
+    text-decoration: none;
+    color: black;
+    background: #bdbdbd;
+    padding: 6px 14px;
     border-radius: 8px;
-    font-size: 14px;
 }
 
-.create-user-container button {
-    width: 100%;
-    padding: 12px;
-    background: #444;
+.logout {
+    background: #7d7d7d;
     color: white;
+}
+
+/* CONTENT */
+.content {
+    max-width: 900px;
+    margin: 60px auto;
+}
+
+/* TITLE */
+.page-title {
+    font-size: 48px;
+    margin-bottom: 30px;
+}
+
+/* CARD */
+.card {
+    background: #e0e0e0;
+    padding: 30px;
+    border-radius: 14px;
+}
+
+/* FORM */
+.card form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.card input,
+.card select {
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #aaa;
+    background: #f5f5f5;
+    font-size: 15px;
+    color: #333;
+}
+
+/* PLACEHOLDER LIKE LOGIN */
+.card input::placeholder {
+    color: #888;
+}
+
+/* BUTTON */
+.btn-primary {
+    margin-top: 20px;
+    align-self: flex-start;
+    padding: 10px 24px;
+    background: #bdbdbd;
     border: none;
     border-radius: 8px;
-    font-size: 15px;
+    font-weight: 600;
     cursor: pointer;
 }
 
-.create-user-container button:hover {
-    background: #333;
+/* SUCCESS MESSAGE */
+.success-box {
+    margin-top: 20px;
+    background: #d0ffd6;
+    padding: 14px 20px;
+    border-radius: 10px;
+    color: #1b5e20;
+    font-weight: 600;
 }
 
-.create-user-container .messages {
-    margin-bottom: 15px;
-    color: green;
-    font-weight: 500;
+/* MOBILE */
+@media (max-width: 768px) {
+    .content {
+        padding: 0 20px;
+    }
+
+    .page-title {
+        font-size: 32px;
+    }
 }
