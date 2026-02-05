@@ -1,19 +1,82 @@
-<h1>Edit assignment</h1>
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit assignment</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<form method="POST" action="/edit-assignment/<?= $assignment['id'] ?>" enctype="multipart/form-data">
-    <input type="text" name="title" value="<?= $assignment['title'] ?>" required>
-    <input type="text" name="description" value="<?= $assignment['description'] ?>">
+    <!-- reuse exact same styles as create -->
+    <link rel="stylesheet" href="/public/styles/dashboard.css">
+    <link rel="stylesheet" href="/public/styles/create-user.css">
+</head>
+<body>
 
-    <input type="file" name="video" accept="video/*">
+<header class="top-bar">
+    <div class="logo">FINCH</div>
+    <nav>
+        <a href="/assignments">Assignments</a>
+        <a href="/dashboard">Dashboard</a>
+        <a href="/logout" class="logout">Log out</a>
+    </nav>
+</header>
 
-    <select name="company_id">
-        <?php foreach($companies as $c): ?>
-            <option value="<?= $c['id'] ?>"
-                <?= $c['id'] == $assignment['company_id'] ? 'selected' : '' ?>>
-                <?= $c['name'] ?>
-            </option>
-        <?php endforeach; ?>
-    </select>
+<main class="content">
 
-    <button type="submit">Save changes</button>
-</form>
+    <h1 class="page-title">Edit assignment</h1>
+
+    <!-- FORM CARD -->
+    <div class="card">
+
+        <form
+            method="POST"
+            action="/edit-assignment/<?= $assignment['id'] ?>"
+            enctype="multipart/form-data"
+        >
+
+            <input
+                type="text"
+                name="title"
+                placeholder="Assignment title"
+                value="<?= htmlspecialchars($assignment['title']) ?>"
+                required
+            >
+
+            <textarea
+                name="description"
+                placeholder="Assignment description (optional)"
+                rows="4"
+            ><?= htmlspecialchars($assignment['description'] ?? '') ?></textarea>
+
+            <input
+                type="file"
+                name="video"
+                accept="video/*"
+            >
+
+            <select name="company_id" required>
+                <option value="" disabled>
+                    Select company
+                </option>
+
+                <?php foreach ($companies as $c): ?>
+                    <option
+                        value="<?= $c['id'] ?>"
+                        <?= $c['id'] == $assignment['company_id'] ? 'selected' : '' ?>
+                    >
+                        <?= htmlspecialchars($c['name']) ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+
+            <button type="submit" class="btn-primary">
+                Save changes
+            </button>
+
+        </form>
+
+    </div>
+
+</main>
+
+</body>
+</html>

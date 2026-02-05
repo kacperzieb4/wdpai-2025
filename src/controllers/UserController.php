@@ -56,5 +56,18 @@ class UserController
         include "public/views/$view.html";
     }
 
+    public function index()
+    {
+        if (!isset($_SESSION['user_role']) || $_SESSION['user_role'] === 'USER') {
+            $this->render('403');
+            return;
+        }
+
+        $users = $this->userRepository->getAllUsersWithCompany();
+        $this->render('manage-users', ['users' => $users]);
+    }
+
+
+
 
 }

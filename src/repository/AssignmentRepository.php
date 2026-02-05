@@ -16,6 +16,17 @@ class AssignmentRepository extends Repository
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    public function getAssignment(int $id)
+    {
+        $stmt = $this->database->connect()->prepare("
+            SELECT * FROM assignments WHERE id = :id
+        ");
+        $stmt->execute(['id' => $id]);
+
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+
     public function getUserAssignments($userId)
     {
         $stmt = $this->database->connect()->prepare("

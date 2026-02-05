@@ -106,7 +106,7 @@ class AssignmentController
 
     public function edit($id)
     {
-        $assignment = $this->assignmentRepository->find($id);
+        $assignment = $this->assignmentRepository->getAssignment($id);
         $companies = $this->companyRepository->getAll();
 
         $this->render('edit-assignment', [

@@ -211,6 +211,10 @@ class Routing {
                 $ctrl->edit($segments[1] ?? null);
                 break;
 
+            case 'manage-users':
+                $ctrl = new UserController();
+                $ctrl->index();
+                break;
 
             default:
                 include 'public/views/404.html';

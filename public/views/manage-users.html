@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Manage users</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="/public/styles/dashboard.css">
+</head>
+<body>
+
+<header class="top-bar">
+    <div class="logo">FINCH</div>
+    <nav>
+        <a href="/dashboard">Dashboard</a>
+        <a href="/logout" class="logout">Log out</a>
+    </nav>
+</header>
+
+<main class="content">
+
+    <h1>Users</h1>
+
+    <!-- CREATE USER -->
+    <div class="admin-panel">
+        <a href="/create-user" class="admin-tile">
+            ➕ Create user
+        </a>
+    </div>
+
+    <!-- LIST -->
+    <h2>User list:</h2>
+
+    <div class="files-list">
+        <?php foreach ($users as $u): ?>
+            <div class="file-tile">
+                <div class="file-info">
+                    <span>👤</span>
+                    <span class="file-name">
+                        <?= htmlspecialchars($u['firstname']) ?>
+                        <?= htmlspecialchars($u['lastname']) ?>
+                    </span>
+                    <small>
+                        <?= $u['company'] ?? '— no company —' ?>
+                    </small>
+                </div>
+
+                <div>
+                    <a href="/edit-user/<?= $u['id'] ?>" class="watch-btn">Edit</a>
+                    <a href="/delete-user/<?= $u['id'] ?>" class="watch-btn">Delete</a>
+                </div>
+            </div>
+        <?php endforeach; ?>
+    </div>
+
+</main>
+
+</body>
+</html>

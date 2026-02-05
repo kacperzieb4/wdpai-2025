@@ -80,4 +80,22 @@ class UserRepository extends Repository
             ':id' => $userId
         ]);
     }
+
+    public function getAllUsersWithCompany()
+    {
+        $stmt = $this->database->connect()->prepare("
+            SELECT 
+                u.id,
+                u.firstname,
+                u.lastname,
+                c.name AS company
+            FROM users u
+            LEFT JOIN companies c ON u.company_id = c.id
+            ORDER BY u.lastname
+        ");
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
 }
