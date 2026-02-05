@@ -57,13 +57,14 @@ body {
 
 .video-box video {
     width: 100%;
+    max-height: 65vh;
     border-radius: 12px;
     background: #000;
 }
 
 /* DESCRIPTION */
 .assignment-description {
-    background: #f0f0f0;
+    background: #e0e0e0;
     padding: 16px 20px;
     border-radius: 10px;
 }
@@ -138,3 +139,47 @@ body {
     }
 }
 
+/* tighter spacing for New Comment section */
+.section-title + .new-comment {
+    margin-top: 8px;
+}
+
+.new-comment {
+    margin-top: 0;
+}
+
+.video-box,
+.assignment-description,
+.comment {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.assignment-description,
+.comment {
+    margin-top: 12px;
+}
+ 
+
+/* DOWNLOAD VIDEO */
+.download-box {
+    width: 100%;
+    margin-top: 12px;
+}
+
+.download-btn {
+    display: block;
+    width: 100%;
+    text-align: center;
+    padding: 14px 0;
+    background: #bdbdbd;
+    color: #000;
+    text-decoration: none;
+    font-weight: 600;
+    border-radius: 10px;
+    transition: background 0.2s ease;
+}
+
+.download-btn:hover {
+    background: #a9a9a9;
+}

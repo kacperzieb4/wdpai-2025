@@ -27,6 +27,17 @@
         </video>
     </div>
 
+    <div class="download-box">
+        <a
+            href="/<?= $assignment['video_path'] ?>"
+            download
+            class="download-btn"
+        >
+            ⬇ Download
+        </a>
+    </div>
+
+
     <?php if (!empty($assignment['description'])): ?>
         <h3 class="section-title">Description:</h3>
         <div class="assignment-description">
@@ -35,9 +46,9 @@
     <?php endif; ?>
 
     <!-- NEW COMMENT -->
-    <div class="comment new-comment">
-        <h3 class="section-title">New Comment:</h3>
+    <h3 class="section-title">New Comment:</h3>
 
+    <div class="comment new-comment">
         <form method="POST" action="/add-comment">
             <input type="hidden" name="assignment_id" value="<?= $assignment['id'] ?>">
             <input type="hidden" name="video_timestamp" id="timestampInput">
