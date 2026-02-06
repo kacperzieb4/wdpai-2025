@@ -1,10 +1,17 @@
+/* =========================
+   BASE
+   ========================= */
+
 body {
     margin: 0;
     font-family: Arial, sans-serif;
     background: #fff;
 }
 
-/* TOP BAR */
+/* =========================
+   TOP BAR
+   ========================= */
+
 .top-bar {
     background: #9e9e9e;
     padding: 12px 40px;
@@ -18,21 +25,18 @@ body {
     font-size: 20px;
 }
 
-.top-bar nav a {
-    color: black;
-    margin-left: 20px;
-    text-decoration: none;
-    background: #bdbdbd;
-    padding: 6px 14px;
-    border-radius: 8px;
-}
-
 .logout {
     background: #7d7d7d;
     color: white;
+    padding: 6px 14px;
+    border-radius: 8px;
+    text-decoration: none;
 }
 
-/* MAIN */
+/* =========================
+   MAIN LAYOUT
+   ========================= */
+
 .assignment-wrapper {
     max-width: 900px;
     margin: 60px auto;
@@ -49,11 +53,9 @@ body {
     font-size: 20px;
 }
 
-/* VIDEO */
-.video-box {
-    display: flex;
-    justify-content: center;
-}
+/* =========================
+   VIDEO
+   ========================= */
 
 .video-box video {
     width: 100%;
@@ -62,108 +64,11 @@ body {
     background: #000;
 }
 
-/* DESCRIPTION */
-.assignment-description {
-    background: #e0e0e0;
-    padding: 16px 20px;
-    border-radius: 10px;
-}
+/* =========================
+   DOWNLOAD
+   ========================= */
 
-/* COMMENTS */
-.comment {
-    background: #e0e0e0;
-    padding: 16px 20px;
-    border-radius: 10px;
-    margin-top: 15px;
-    width: 100%;
-}
-
-.new-comment {
-    margin-top: 40px;
-}
-
-.comment-row {
-    display: flex;
-}
-
-.comment-input {
-    width: 100%;
-    padding: 10px;
-    border-radius: 6px;
-    border: 1px solid #aaa;
-    background: #f5f5f5;
-}
-
-.comment-btn {
-    margin-top: 15px;
-    padding: 10px 20px;
-    background: #bdbdbd;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 600;
-}
-
-.timestamp-toggle {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 10px;
-    font-size: 14px;
-}
-
-.comment-timestamp {
-    font-size: 13px;
-    font-weight: 600;
-    color: #555;
-    margin-bottom: 4px;
-}
-
-.comment-timestamp.clickable {
-    cursor: pointer;
-    color: #333;
-}
-
-.comment-timestamp.clickable:hover {
-    text-decoration: underline;
-}
-
-/* MOBILE */
-@media (max-width: 768px) {
-    .assignment-wrapper {
-        padding: 0 20px;
-    }
-
-    .file-title {
-        font-size: 32px;
-    }
-}
-
-/* tighter spacing for New Comment section */
-.section-title + .new-comment {
-    margin-top: 8px;
-}
-
-.new-comment {
-    margin-top: 0;
-}
-
-.video-box,
-.assignment-description,
-.comment {
-    width: 100%;
-    box-sizing: border-box;
-}
-
-.assignment-description,
-.comment {
-    margin-top: 12px;
-}
- 
-
-/* DOWNLOAD VIDEO */
 .download-box {
-    width: 100%;
     margin-top: 12px;
 }
 
@@ -177,9 +82,210 @@ body {
     text-decoration: none;
     font-weight: 600;
     border-radius: 10px;
-    transition: background 0.2s ease;
 }
 
 .download-btn:hover {
     background: #a9a9a9;
+}
+
+/* =========================
+   DESCRIPTION
+   ========================= */
+
+.assignment-description {
+    background: #e0e0e0;
+    padding: 16px 20px;
+    border-radius: 10px;
+}
+
+/* =========================
+   COMMENTS – GRID
+   ========================= */
+
+.comment {
+    background: #e0e0e0;
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-top: 15px;
+
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+        "header actions"
+        "timestamp actions"
+        "content actions";
+    column-gap: 20px;
+}
+
+/* HEADER */
+
+.comment-header {
+    grid-area: header;
+}
+
+.comment-header strong {
+    font-size: 16px;
+}
+
+.comment-header small {
+    display: block;
+    font-size: 13px;
+    color: #555;
+    margin-top: 2px;
+}
+
+/* TIMESTAMP */
+
+.comment-timestamp {
+    grid-area: timestamp;
+    font-size: 13px;
+    font-weight: 600;
+    color: #555;
+    margin-top: 6px;
+}
+
+.comment-timestamp.clickable {
+    cursor: pointer;
+}
+
+.comment-timestamp.clickable:hover {
+    text-decoration: underline;
+}
+
+/* CONTENT */
+
+.comment-content {
+    grid-area: content;
+    margin-top: 10px;
+    font-size: 15px;
+    line-height: 1.4;
+    word-break: break-word;
+}
+
+/* ACTIONS */
+
+.comment-actions {
+    grid-area: actions;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-weight: bold;
+}
+
+.comment-actions span,
+.comment-actions a {
+    color: #000;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.comment-actions span:hover,
+.comment-actions a:hover {
+    text-decoration: underline;
+}
+
+/* =========================
+   NEW COMMENT
+   ========================= */
+
+.new-comment {
+    margin-top: 10px;
+}
+
+.comment-row {
+    display: flex;
+}
+
+/* INPUTS */
+
+.comment-input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #aaa;
+    background: #f5f5f5;
+    font-size: 14px;
+}
+
+.comment-btn {
+    margin-top: 10px;
+    padding: 8px 16px;
+    background: #bdbdbd;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.comment-btn:hover {
+    background: #a9a9a9;
+}
+
+/* =========================
+   EDIT MODE
+   ========================= */
+
+.comment-edit-box {
+    display: none;
+    grid-column: 1 / -1;
+    margin-top: 10px;
+}
+
+.comment.editing .comment-content,
+.comment.editing .comment-actions {
+    display: none;
+}
+
+.comment.editing {
+    grid-template-areas:
+        "header header"
+        "timestamp timestamp"
+        "edit edit";
+}
+
+.comment.editing .comment-edit-box {
+    display: block;
+    grid-area: edit;
+}
+
+.comment-edit-actions {
+    margin-top: 8px;
+}
+/* 🔒 FIX: input nie wychodzi poza komentarz */
+.comment-input {
+    box-sizing: border-box;
+    max-width: 100%;
+}
+.comment-edit-box {
+    width: 100%;
+}
+
+
+
+/* =========================
+   MOBILE
+   ========================= */
+
+@media (max-width: 768px) {
+    .assignment-wrapper {
+        padding: 0 20px;
+    }
+
+    .file-title {
+        font-size: 32px;
+    }
+
+    .comment {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+            "header"
+            "timestamp"
+            "content"
+            "actions";
+    }
+
+    .comment-actions {
+        justify-content: flex-start;
+        margin-top: 10px;
+    }
 }

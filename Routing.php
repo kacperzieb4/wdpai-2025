@@ -251,10 +251,22 @@ class Routing {
                 $ctrl->deleteWithUsers($segments[1] ?? null);
                 break;
 
-            case 'delete-assignment':
-                $ctrl = new AssignmentController();
-                $ctrl->delete($segments[1] ?? null);
+            case 'add-comment':
+                $ctrl = new AssignmentViewController();
+                $ctrl->addComment();
                 break;
+
+            case 'delete-comment':
+                $ctrl = new AssignmentViewController();
+                $ctrl->deleteComment($segments[1] ?? null);
+                break;
+
+            case 'edit-comment':
+                $ctrl = new AssignmentViewController();
+                $ctrl->editComment($segments[1] ?? null);
+                break;
+
+
 
             default:
                 include 'public/views/404.html';

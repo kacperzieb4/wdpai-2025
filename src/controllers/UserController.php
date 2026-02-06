@@ -21,75 +21,93 @@ class UserController extends AppController
 
     public function create()
     {
-        if (!isset($_SESSION['user_role']) || $_SESSION['user_role'] === 'USER') {
-            $this->render('403');
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $companies = $this->companyRepository->getAll();
+            $roles = ['ADMIN', 'MODERATOR', 'USER']; // 🔹 zgodnie z DB
+
+            require_once 'public/views/create-user.html';
             return;
         }
 
-        $activationCode = null;
-        $createdEmail = null;
-        $errorMessage = null;
+        $email = trim($_POST['email']);
+        $firstname = trim($_POST['firstname']);
+        $lastname = trim($_POST['lastname']);
 
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
-            if (
-                $_SESSION['user_role'] === 'MODERATOR'
-                && $this->roleRepository->getNameById((int)$_POST['role_id']) === 'ADMIN'
-            ) {
-                $errorMessage = 'You are not allowed to create an ADMIN user.';
-            } else {
-                try {
-                    $activationCode = bin2hex(random_bytes(16));
-                    $createdEmail = $_POST['email'];
-                    $roleId = (int)$_POST['role_id'];
-                    $roleName = $this->roleRepository->getNameById($roleId);
-
-                    if ($roleName === 'MODERATOR') {
-                        $companyId = $this->companyRepository->getFinchStudioId();
-                    }
-                    else {
-                        if (empty($_POST['company_id'])) {
-                            $errorMessage = 'Company is required.';
-                        } else {
-                            $companyId = (int)$_POST['company_id'];
-                        }
-                    }
-
-                    $this->userRepository->createInactiveUser(
-                        $createdEmail,
-                        $_POST['firstname'],
-                        $_POST['lastname'],
-                        (int)$_POST['role_id'],
-                        $activationCode
-                    );
-
-                } catch (PDOException $e) {
-
-                    if ($e->getCode() === '23505') {
-                        $errorMessage = 'User with this email already exists.';
-                    } else {
-                        $errorMessage = 'Unexpected error occurred. Please try again.';
-                    }
-
-                    $activationCode = null;
-                    $createdEmail = null;
-                }
-            }
+        // 🔹 FORMULARZ WYSYŁA NAZWĘ ROLI
+        if (!isset($_POST['role'])) {
+            $error = 'Role is required';
+            $companies = $this->companyRepository->getAll();
+            $roles = ['ADMIN', 'MODERATOR', 'USER'];
+            require_once 'public/views/create-user.html';
+            return;
         }
 
-        $roles = $this->roleRepository->getAll();
-        $companies = $this->companyRepository->getAll();
-        $finchStudioId = $this->companyRepository->getFinchStudioId();
+        $roleName = $_POST['role']; // ADMIN / MODERATOR / USER
+        $roleId = $this->userRepository->getRoleIdByName($roleName);
 
-        $this->render('create-user', [
-            'roles' => $roles,
-            'companies' => $companies,
-            'finchStudioId' => $finchStudioId,
-            'activationCode' => $activationCode,
-            'createdEmail' => $createdEmail,
-            'errorMessage' => $errorMessage
-        ]);
+        if (!$roleId) {
+            $error = 'Invalid role';
+            $companies = $this->companyRepository->getAll();
+            $roles = ['ADMIN', 'MODERATOR', 'USER'];
+            require_once 'public/views/create-user.html';
+            return;
+        }
+
+        // 🔒 LOGIKA FIRMY
+        if ($roleName === 'ADMIN' || $roleName === 'MODERATOR') {
+            $companyId = 1; // Finch Studio
+        } else {
+            if (empty($_POST['company'])) {
+                $error = 'Company is required';
+                $companies = $this->companyRepository->getAll();
+                $roles = ['ADMIN', 'MODERATOR', 'USER'];
+                require_once 'public/views/create-user.html';
+                return;
+            }
+            $companyId = (int) $_POST['company'];
+        }
+
+        // ❌ EMAIL JUŻ ISTNIEJE
+        if ($this->userRepository->getUserByEmail($email)) {
+            $error = 'User with this email already exists';
+            $companies = $this->companyRepository->getAll();
+            $roles = ['ADMIN', 'MODERATOR', 'USER'];
+            require_once 'public/views/create-user.html';
+            return;
+        }
+
+       if ($_SESSION['user_role'] === 'MODERATOR' && $roleName === 'ADMIN') {
+            $error = 'You are not allowed to create admin users.';
+            $companies = $this->companyRepository->getAll();
+            $roles = ['ADMIN', 'MODERATOR', 'USER'];
+            require 'public/views/create-user.html';
+            return;
+        }
+
+
+
+        // 🔑 KOD AKTYWACYJNY
+        $activationCode = bin2hex(random_bytes(16));
+
+        // ✅ POPRAWNE WYWOŁANIE
+        $this->userRepository->createInactiveUser(
+            $email,
+            $firstname,
+            $lastname,
+            $roleId,
+            $companyId,
+            $activationCode
+        );
+
+        // ✅ POKAZUJEMY KOD, NIE REDIRECT
+        $successCode = $activationCode;
+        $companies = $this->companyRepository->getAll();
+        $roles = ['ADMIN', 'MODERATOR', 'USER'];
+
+        require_once 'public/views/create-user.html';
     }
+
+
 
     public function index()
     {
@@ -102,50 +120,68 @@ class UserController extends AppController
         $this->render('manage-users', ['users' => $users]);
     }
 
-    public function edit($id)
+    public function edit(int $id)
     {
-        if (!isset($_SESSION['user_role']) || $_SESSION['user_role'] === 'USER') {
-            $this->render('403');
-            return;
-        }
-
-        $user = $this->userRepository->getUserById((int)$id);
-        if (!$user) {
-            $this->render('404');
-            return;
-        }
-
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
-            if (
-                $_SESSION['user_role'] === 'MODERATOR'
-                && $this->roleRepository->getNameById((int)$_POST['role_id']) === 'ADMIN'
-            ) {
-                $this->render('403');
-                return;
-            }
-
-            $this->userRepository->updateUser(
-                (int)$id,
-                $_POST['firstname'],
-                $_POST['lastname'],
-                (int)$_POST['role_id'],
-                $_POST['company_id'] ?: null
-            );
-
-            header('Location: /manage-users');
-            exit;
-        }
-
+        $user = $this->userRepository->getById($id);
         $roles = $this->roleRepository->getAll();
         $companies = $this->companyRepository->getAll();
 
-        $this->render('edit-user', [
-            'user' => $user,
-            'roles' => $roles,
-            'companies' => $companies
-        ]);
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            require 'public/views/edit-user.html';
+            return;
+        }
+
+        $firstname = trim($_POST['firstname']);
+        $lastname = trim($_POST['lastname']);
+        $roleId = (int) $_POST['role_id'];
+        $companyId = $_POST['company_id'] ?? null;
+
+        // 🔎 nazwa roli
+        $roleName = null;
+        foreach ($roles as $r) {
+            if ($r['id'] == $roleId) {
+                $roleName = $r['name'];
+                break;
+            }
+        }
+
+        if (!$roleName) {
+            $error = 'Invalid role';
+            require 'public/views/edit-user.html';
+            return;
+        }
+
+        // 🔒 MODERATOR nie może ustawić ADMINA
+        if ($_SESSION['user_role'] === 'MODERATOR' && $roleName === 'ADMIN') {
+            $error = 'You are not allowed to assign ADMIN role';
+            require 'public/views/edit-user.html';
+            return;
+        }
+
+        // 🔒 ADMIN + MODERATOR → zawsze Finch Studio
+        if ($roleName === 'ADMIN' || $roleName === 'MODERATOR') {
+            $companyId = 1; // Finch Studio
+        }
+
+        // 🔒 USER musi mieć firmę
+        if ($roleName === 'USER' && !$companyId) {
+            $error = 'User must be assigned to a company';
+            require 'public/views/edit-user.html';
+            return;
+        }
+
+        $this->userRepository->updateUser(
+            $id,
+            $firstname,
+            $lastname,
+            $roleId,
+            (int) $companyId
+        );
+
+        header('Location: /manage-users');
+        exit;
     }
+
 
 
     public function delete($id)
@@ -162,14 +198,14 @@ class UserController extends AppController
             return;
         }
 
-        $userToDelete = $this->userRepository->getUserById($id);
+        $userToDelete = $this->userRepository->getById($id);
         if (!$userToDelete) {
             $this->render('404');
             return;
         }
 
         $currentRole = $_SESSION['user_role'];
-        $targetRole = $userToDelete['role'];
+        $targetRoleId = $userToDelete['role_id'];
 
         if ($currentRole === 'ADMIN') {
             $this->userRepository->deleteUser($id);
@@ -185,5 +221,7 @@ class UserController extends AppController
 
         $this->render('403');
     }
+
+
 
 }

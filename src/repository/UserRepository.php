@@ -45,6 +45,7 @@ class UserRepository extends Repository
             ':firstname' => $firstname,
             ':lastname' => $lastname,
             ':role' => $roleId,
+            ':company' => $companyId,
             ':code' => $code
         ]);
     }
@@ -146,6 +147,25 @@ class UserRepository extends Repository
         ");
         $stmt->execute([':id' => $id]);
     }
+
+    public function getById(int $id)
+    {
+        $stmt = $this->database->connect()->prepare("
+            SELECT 
+                id,
+                email,
+                firstname,
+                lastname,
+                role_id,
+                company_id
+            FROM users
+            WHERE id = :id
+        ");
+
+        $stmt->execute([':id' => $id]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
 
 
 

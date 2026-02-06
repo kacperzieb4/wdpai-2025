@@ -1,64 +1,119 @@
 <?php
 
-require_once 'Database.php';
+require_once __DIR__ . '/../repository/AssignmentRepository.php';
+require_once __DIR__ . '/../repository/CommentRepository.php';
 
 class AssignmentViewController
 {
+    private AssignmentRepository $assignmentRepository;
+    private CommentRepository $commentRepository;
+
+    public function __construct()
+    {
+        $this->assignmentRepository = new AssignmentRepository();
+        $this->commentRepository = new CommentRepository();
+    }
+
     public function show($id)
     {
-        if (!$id) {
-            die('Brak ID assignmentu');
+        $this->view($id);
+    }
+
+
+    public function view($id)
+    {
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: /login');
+            exit;
         }
 
-        $db = new Database();
-        $conn = $db->connect();
-
-        // ASSIGNMENT
-        $stmt = $conn->prepare("
-            SELECT * FROM assignments WHERE id = :id
-        ");
-        $stmt->execute(['id' => $id]);
-        $assignment = $stmt->fetch(PDO::FETCH_ASSOC);
-
+        $assignment = $this->assignmentRepository->getAssignment((int)$id);
         if (!$assignment) {
-            die('Assignment not found');
+            require 'public/views/404.html';
+            return;
         }
 
-        // COMMENTS
-        $stmt = $conn->prepare("
-            SELECT 
-                c.content,
-                c.created_at,
-                c.video_timestamp,
-                u.firstname || ' ' || u.lastname AS user_name
-            FROM comments c
-            JOIN users u ON c.user_id = u.id
-            WHERE c.assignment_id = :id
-            ORDER BY c.created_at DESC
-        ");
-        $stmt->execute(['id' => $id]);
-        $comments = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $comments = $this->commentRepository->getByAssignmentId((int)$id);
 
         require 'public/views/assignment-view.html';
     }
 
     public function addComment()
     {
-        $db = new Database();
-        $conn = $db->connect();
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: /dashboard');
+            exit;
+        }
 
-        $stmt = $conn->prepare("
-            INSERT INTO comments (assignment_id, user_id, content, video_timestamp)
-            VALUES (:assignment_id, :user_id, :content, :video_timestamp)
-        ");
+        $assignmentId = (int)$_POST['assignment_id'];
+        $content = trim($_POST['content']);
+        $timestamp = $_POST['video_timestamp'] !== '' ? (int)$_POST['video_timestamp'] : null;
 
-        $stmt->execute([
-            'assignment_id' => $_POST['assignment_id'],
-            'user_id' => $_SESSION['user_id'],
-            'content' => $_POST['content'],
-            'video_timestamp' => $_POST['video_timestamp'] !== '' ? $_POST['video_timestamp'] : null
-        ]);
+        if ($content === '') {
+            header('Location: /assignment/' . $assignmentId);
+            exit;
+        }
 
-        header('Location: /assignment/' . $_POST['assignment_id']);
+        $this->commentRepository->addComment(
+            $assignmentId,
+            $_SESSION['user_id'],
+            $content,
+            $timestamp
+        );
+
+        header('Location: /assignment/' . $assignmentId);
+        exit;
+    }
+
+    public function deleteComment($commentId)
+    {
+        $comment = $this->commentRepository->getById((int)$commentId);
+        if (!$comment) {
+            header('Location: /dashboard');
+            exit;
+        }
+
+        $canDelete =
+            $comment['user_id'] == $_SESSION['user_id']
+            || in_array($_SESSION['user_role'], ['ADMIN', 'MODERATOR']);
+
+        if (!$canDelete) {
+            require 'public/views/403.html';
+            return;
+        }
+
+        $this->commentRepository->delete((int)$commentId);
+
+        header('Location: /assignment/' . $comment['assignment_id']);
+        exit;
+    }
+
+    public function editComment($commentId)
+    {
+        $comment = $this->commentRepository->getById((int)$commentId);
+        if (!$comment) {
+            header('Location: /dashboard');
+            exit;
+        }
+
+        $canEdit =
+            $comment['user_id'] == $_SESSION['user_id']
+            || in_array($_SESSION['user_role'], ['ADMIN', 'MODERATOR']);
+
+        if (!$canEdit) {
+            require 'public/views/403.html';
+            return;
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $content = trim($_POST['content']);
+
+            if ($content !== '') {
+                $this->commentRepository->update((int)$commentId, $content);
+            }
+
+            header('Location: /assignment/' . $comment['assignment_id']);
+            exit;
+        }
     }
 }

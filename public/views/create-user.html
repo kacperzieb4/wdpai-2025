@@ -13,19 +13,38 @@
 <header class="top-bar">
     <div class="logo">FINCH</div>
     <nav>
+        <a href="/dashboard">Dashboard</a>
         <a href="/manage-users">Users</a>
         <a href="/logout" class="logout">Log out</a>
     </nav>
 </header>
 
-<main class="content">
+<main class="create-user-wrapper">
 
-    <h1 class="page-title">Create user</h1>
+    <h1>Create user</h1>
 
-    <div class="card">
-        <form method="POST">
+    <!-- SUCCESS -->
+    <?php if (!empty($successCode)): ?>
+        <div class="message-box">
+            User created successfully.<br>
+            Activation code:
+            <div class="activation-code">
+                <?= htmlspecialchars($successCode) ?>
+            </div>
+        </div>
+    <?php endif; ?>
 
-            <!-- EMAIL -->
+    <!-- ERROR -->
+    <?php if (!empty($error)): ?>
+        <div class="message-box error">
+            <?= htmlspecialchars($error) ?>
+        </div>
+    <?php endif; ?>
+
+    <!-- FORM -->
+    <div class="create-user-card">
+        <form method="POST" class="create-user-form">
+
             <input
                 type="email"
                 name="email"
@@ -33,7 +52,6 @@
                 required
             >
 
-            <!-- FIRSTNAME -->
             <input
                 type="text"
                 name="firstname"
@@ -41,7 +59,6 @@
                 required
             >
 
-            <!-- LASTNAME -->
             <input
                 type="text"
                 name="lastname"
@@ -50,27 +67,24 @@
             >
 
             <!-- ROLE -->
-            <select name="role_id" id="roleSelect" required>
-                <option value="">Role</option>
-
+            <select name="role" id="roleSelect" required>
+                <option value="" disabled selected>Role</option>
                 <?php foreach ($roles as $role): ?>
                     <?php
-                        // moderator nie może tworzyć admina
                         if (
                             $_SESSION['user_role'] === 'MODERATOR'
-                            && $role['name'] === 'ADMIN'
+                            && $role === 'ADMIN'
                         ) continue;
                     ?>
-                    <option value="<?= $role['id'] ?>">
-                        <?= htmlspecialchars($role['name']) ?>
+                    <option value="<?= $role ?>">
+                        <?= $role ?>
                     </option>
                 <?php endforeach; ?>
             </select>
 
             <!-- COMPANY -->
-            <select name="company_id" id="companySelect" required>
-                <option value="">Company</option>
-
+            <select name="company" id="companySelect">
+                <option value="" disabled selected>Company</option>
                 <?php foreach ($companies as $company): ?>
                     <option value="<?= $company['id'] ?>">
                         <?= htmlspecialchars($company['name']) ?>
@@ -78,58 +92,27 @@
                 <?php endforeach; ?>
             </select>
 
-            <button type="submit" class="btn-primary">
-                Create user
-            </button>
+            <button type="submit">Create user</button>
+
         </form>
-
-        <!-- SUCCESS -->
-        <?php if (!empty($activationCode)): ?>
-            <div class="success-box">
-                <h3>User created</h3>
-
-                <p>
-                    User <strong><?= htmlspecialchars($createdEmail) ?></strong>
-                    has been created.
-                </p>
-
-                <p><strong>Activation code:</strong></p>
-
-                <div class="activation-code">
-                    <?= htmlspecialchars($activationCode) ?>
-                </div>
-            </div>
-        <?php endif; ?>
-
-        <!-- ERROR -->
-        <?php if (!empty($errorMessage)): ?>
-            <div class="error-box">
-                <?= htmlspecialchars($errorMessage) ?>
-            </div>
-        <?php endif; ?>
     </div>
 
 </main>
 
 <script>
-    const roleSelect = document.getElementById('roleSelect');
-    const companySelect = document.getElementById('companySelect');
-    const FINCH_ID = <?= (int)$finchStudioId ?>;
+const roleSelect = document.getElementById('roleSelect');
+const companySelect = document.getElementById('companySelect');
 
-    function updateCompanySelect() {
-        const roleText =
-            roleSelect.options[roleSelect.selectedIndex]?.text || '';
-
-        if (roleText === 'MODERATOR') {
-            companySelect.value = FINCH_ID;
-            companySelect.disabled = true;
-        } else {
-            companySelect.disabled = false;
-        }
+function updateCompanyField() {
+    if (roleSelect.value === 'ADMIN' || roleSelect.value === 'MODERATOR') {
+        companySelect.value = '1';
+        companySelect.disabled = true;
+    } else {
+        companySelect.disabled = false;
     }
+}
 
-    roleSelect.addEventListener('change', updateCompanySelect);
-    window.addEventListener('load', updateCompanySelect);
+roleSelect.addEventListener('change', updateCompanyField);
 </script>
 
 </body>

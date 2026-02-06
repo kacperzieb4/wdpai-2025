@@ -167,7 +167,7 @@ class AssignmentController
             'companies' => $companies
         ]);
     }
-    
+
     public function delete($id)
     {
         if ($_SESSION['user_role'] === 'USER') {
@@ -196,6 +196,72 @@ class AssignmentController
         header('Location: /assignments');
         exit;
     }
+
+    public function deleteComment($commentId)
+    {
+        require_once __DIR__ . '/../repository/CommentRepository.php';
+
+        $repo = new CommentRepository();
+        $comment = $repo->getById((int)$commentId);
+
+        if (!$comment) {
+            header('Location: /dashboard');
+            exit;
+        }
+
+        $canDelete =
+            $comment['user_id'] == $_SESSION['user_id'] ||
+            in_array($_SESSION['user_role'], ['ADMIN', 'MODERATOR']);
+
+        if (!$canDelete) {
+            $this->render('403');
+            return;
+        }
+
+        $repo->delete((int)$commentId);
+
+        header('Location: /assignment/' . $comment['assignment_id']);
+        exit;
+    }
+
+    public function editComment($commentId)
+    {
+        require_once __DIR__ . '/../repository/CommentRepository.php';
+
+        $repo = new CommentRepository();
+        $comment = $repo->getById((int)$commentId);
+
+        if (!$comment) {
+            header('Location: /dashboard');
+            exit;
+        }
+
+        $canEdit =
+            $comment['user_id'] == $_SESSION['user_id'] ||
+            in_array($_SESSION['user_role'], ['ADMIN', 'MODERATOR']);
+
+        if (!$canEdit) {
+            $this->render('403');
+            return;
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $content = trim($_POST['content']);
+
+            if ($content !== '') {
+                $repo->update((int)$commentId, $content);
+            }
+
+            header('Location: /assignment/' . $comment['assignment_id']);
+            exit;
+        }
+
+        $this->render('edit-comment', [
+            'comment' => $comment
+        ]);
+    }
+
+
 
 
 }

@@ -22,24 +22,39 @@
 
     <h1 class="page-title">Edit user</h1>
 
+    <?php if (!empty($error)): ?>
+        <div class="error-box">
+            <?= htmlspecialchars($error) ?>
+        </div>
+    <?php endif; ?>
+
     <div class="card">
         <form method="POST">
 
-            <input type="text" name="firstname"
+            <input type="email"
+                   name="email"
+                   value="<?= htmlspecialchars($user['email']) ?>"
+                   readonly>
+
+            <input type="text"
+                   name="firstname"
                    value="<?= htmlspecialchars($user['firstname']) ?>"
-                   placeholder="First name" required>
+                   required>
 
-            <input type="text" name="lastname"
+            <input type="text"
+                   name="lastname"
                    value="<?= htmlspecialchars($user['lastname']) ?>"
-                   placeholder="Last name" required>
+                   required>
 
-            <select name="role_id" required>
+            <!-- ROLE -->
+            <select name="role_id" id="roleSelect" required>
                 <?php foreach ($roles as $role): ?>
-                    <?php if (
-                        $_SESSION['user_role'] === 'MODERATOR'
-                        && $role['name'] === 'ADMIN'
-                    ) continue; ?>
-
+                    <?php
+                        // moderator nie może ustawić ADMIN
+                        if ($_SESSION['user_role'] === 'MODERATOR' && $role['name'] === 'ADMIN') {
+                            continue;
+                        }
+                    ?>
                     <option value="<?= $role['id'] ?>"
                         <?= $role['id'] == $user['role_id'] ? 'selected' : '' ?>>
                         <?= htmlspecialchars($role['name']) ?>
@@ -47,12 +62,12 @@
                 <?php endforeach; ?>
             </select>
 
-            <select name="company_id">
-                <option value="">Company (optional)</option>
-                <?php foreach ($companies as $c): ?>
-                    <option value="<?= $c['id'] ?>"
-                        <?= $c['id'] == $user['company_id'] ? 'selected' : '' ?>>
-                        <?= htmlspecialchars($c['name']) ?>
+            <!-- COMPANY -->
+            <select name="company_id" id="companySelect">
+                <?php foreach ($companies as $company): ?>
+                    <option value="<?= $company['id'] ?>"
+                        <?= $company['id'] == $user['company_id'] ? 'selected' : '' ?>>
+                        <?= htmlspecialchars($company['name']) ?>
                     </option>
                 <?php endforeach; ?>
             </select>
@@ -60,9 +75,33 @@
             <button type="submit" class="btn-primary">
                 Save changes
             </button>
+
         </form>
     </div>
 
 </main>
+
+<script>
+const roleSelect = document.getElementById('roleSelect');
+const companySelect = document.getElementById('companySelect');
+
+function updateCompanyField() {
+    const roleText = roleSelect.options[roleSelect.selectedIndex].text;
+
+    if (roleText === 'ADMIN' || roleText === 'MODERATOR') {
+        companySelect.disabled = true;
+        companySelect.removeAttribute('required');
+    } else {
+        companySelect.disabled = false;
+        companySelect.setAttribute('required', 'required');
+    }
+}
+
+roleSelect.addEventListener('change', updateCompanyField);
+
+// 🔥 KLUCZ: wykonanie przy wejściu na stronę
+updateCompanyField();
+</script>
+
 </body>
 </html>
