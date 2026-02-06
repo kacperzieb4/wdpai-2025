@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Manage companies</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="/public/styles/dashboard.css">
+</head>
+<body>
+
+<header class="top-bar">
+    <div class="logo">FINCH</div>
+    <nav>
+        <a href="/dashboard">Dashboard</a>
+        <a href="/logout" class="logout">Log out</a>
+    </nav>
+</header>
+
+<main class="content">
+
+    <h1>Companies</h1>
+
+    <div class="admin-panel">
+        <a href="/create-company" class="admin-tile">
+            ➕ Create company
+        </a>
+    </div>
+
+    <h2>Company list:</h2>
+
+    <div class="files-list">
+        <?php foreach ($companies as $c): ?>
+            <div class="file-tile">
+                <div class="file-info">
+                    <span>🏢</span>
+                    <span class="file-name">
+                        <?= htmlspecialchars($c['name']) ?>
+                    </span>
+                </div>
+
+                <div class="file-actions">
+                    <?php if (empty($c['is_protected'])): ?>
+                        <a href="/edit-company/<?= $c['id'] ?>" class="watch-btn">
+                            Edit
+                        </a>
+
+                        <a href="/delete-company/<?= $c['id'] ?>" class="watch-btn">
+                            Delete
+                        </a>
+
+                        <a href="/delete-company-with-users/<?= $c['id'] ?>"
+                        class="watch-btn danger">
+                            Delete with users
+                        </a>
+                    <?php else: ?>
+                        <span class="watch-btn disabled">
+                            Protected
+                        </span>
+                    <?php endif; ?>
+
+                </div>
+            </div>
+        <?php endforeach; ?>
+    </div>
+
+</main>
+
+</body>
+</html>

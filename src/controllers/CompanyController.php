@@ -1,62 +1,116 @@
 <?php
 
-require_once 'src/repository/CompanyRepository.php';
-require_once 'src/repository/UserRepository.php';
+require_once 'AppController.php';
+require_once __DIR__ . '/../repository/CompanyRepository.php';
 
-class CompanyController
+class CompanyController extends AppController
 {
-    private $companyRepository;
-    private $userRepository;
+    private CompanyRepository $companyRepository;
 
     public function __construct()
     {
+        parent::__construct();
         $this->companyRepository = new CompanyRepository();
-        $this->userRepository = new UserRepository();
+    }
+
+    private function checkAccess()
+    {
+        if (!isset($_SESSION['user_role']) || $_SESSION['user_role'] === 'USER') {
+            $this->render('403');
+            exit;
+        }
     }
 
     public function index()
     {
-        if (!isset($_SESSION['user_role']) || $_SESSION['user_role'] === 'USER') {
-            header("Location: /dashboard");
-            exit();
-        }
+        $this->checkAccess();
 
         $companies = $this->companyRepository->getAll();
-        $users = $this->userRepository->getAllUsers();
-
-        $this->render('companies', [
-            'companies' => $companies,
-            'users' => $users
-        ]);
+        $this->render('manage-companies', ['companies' => $companies]);
     }
 
     public function create()
     {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $name = $_POST['name'];
-            $this->companyRepository->create($name);
+        $this->checkAccess();
 
-            header("Location: /companies");
-            exit();
+        $errorMessage = null;
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            try {
+                $this->companyRepository->create($_POST['name']);
+                header('Location: /manage-companies');
+                exit;
+            } catch (PDOException $e) {
+                if ($e->getCode() === '23505') {
+                    $errorMessage = 'Company with this name already exists.';
+                } else {
+                    $errorMessage = 'Unexpected error occurred.';
+                }
+            }
+        }
+
+        $this->render('create-company', [
+            'errorMessage' => $errorMessage
+        ]);
+    }
+
+    public function edit($id)
+    {
+        $this->checkAccess();
+
+        $company = $this->companyRepository->getById((int)$id);
+        if (!$company) {
+            $this->render('404');
+            return;
+        }
+
+        $errorMessage = null;
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            try {
+                $this->companyRepository->update((int)$id, $_POST['name']);
+                header('Location: /manage-companies');
+                exit;
+            } catch (PDOException $e) {
+                if ($e->getCode() === '23505') {
+                    $errorMessage = 'Company with this name already exists.';
+                } else {
+                    $errorMessage = 'Unexpected error occurred.';
+                }
+            }
+        }
+
+        $this->render('edit-company', [
+            'company' => $company,
+            'errorMessage' => $errorMessage
+        ]);
+    }
+
+    public function delete($id)
+    {
+        $this->checkAccess();
+
+        $this->companyRepository->delete((int)$id);
+        header('Location: /manage-companies');
+        exit;
+    }
+
+    public function deleteWithUsers($id)
+    {
+        $this->checkAccess();
+
+        $this->companyRepository->deleteWithUsers((int)$id);
+
+        header('Location: /manage-companies');
+        exit;
+    }
+
+    private function ensureNotProtected(array $company)
+    {
+        if (!empty($company['is_protected'])) {
+            $this->render('403');
+            exit;
         }
     }
 
-    public function assignUser()
-    {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $userId = $_POST['user_id'];
-            $companyId = $_POST['company_id'];
-
-            $this->userRepository->assignUserToCompany($userId, $companyId);
-
-            header("Location: /companies");
-            exit();
-        }
-    }
-
-    private function render(string $view, array $params = [])
-    {
-        extract($params);
-        include "public/views/$view.html";
-    }
 }

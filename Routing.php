@@ -226,6 +226,31 @@ class Routing {
                 $ctrl->delete($segments[1] ?? null);
                 break;
 
+            case 'manage-companies':
+                $ctrl = new CompanyController();
+                $ctrl->index();
+                break;
+
+            case 'create-company':
+                $ctrl = new CompanyController();
+                $ctrl->create();
+                break;
+
+            case 'edit-company':
+                $ctrl = new CompanyController();
+                $ctrl->edit($segments[1] ?? null);
+                break;
+
+            case 'delete-company':
+                $ctrl = new CompanyController();
+                $ctrl->delete($segments[1] ?? null);
+                break;
+
+            case 'delete-company-with-users':
+                $ctrl = new CompanyController();
+                $ctrl->deleteWithUsers($segments[1] ?? null);
+                break;
+
             default:
                 include 'public/views/404.html';
                 break;

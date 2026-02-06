@@ -154,3 +154,8 @@ h2 {
     display: flex;
     gap: 10px;
 }
+
+.watch-btn.danger {
+    color: #ff0000;
+    font-weight: 600;
+}

@@ -26,13 +26,14 @@ INSERT INTO roles (name) VALUES
 -- =========================
 CREATE TABLE companies (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(255) NOT NULL
+    name VARCHAR(255) UNIQUE NOT NULL,
+    is_protected BOOLEAN DEFAULT FALSE -- 🔒 firma systemowa
 );
 
-INSERT INTO companies (name) VALUES
-('Finch Studio'),
-('MediaCorp'),
-('VisionX');
+INSERT INTO companies (name, is_protected) VALUES
+('Finch Studio', TRUE),   -- 👑 firma święta (admin/moderator)
+('MediaCorp', FALSE),
+('VisionX', FALSE);
 
 -- =========================
 -- USERS
@@ -44,7 +45,7 @@ CREATE TABLE users (
     firstname VARCHAR(100),
     lastname VARCHAR(100),
     role_id INT REFERENCES roles(id),
-    company_id INT REFERENCES companies(id),
+    company_id INT REFERENCES companies(id) ON DELETE SET NULL,
     activation_code VARCHAR(100),
     is_active BOOLEAN DEFAULT FALSE, -- 🔒 nowy user nieaktywny
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -58,27 +59,27 @@ VALUES
     '$2a$12$fB2uG.TlFNStF8oc1ergQuZr/IU1XDOWkgMbYb21DprkRULce31my',
     'Finch',
     'Admin',
-    (SELECT id FROM roles WHERE name='ADMIN'),
-    1,
-    true
+    (SELECT id FROM roles WHERE name = 'ADMIN'),
+    (SELECT id FROM companies WHERE name = 'Finch Studio'),
+    TRUE
 ),
 (
     'moderator@finch.pl',
     '$2a$12$fB2uG.TlFNStF8oc1ergQuZr/IU1XDOWkgMbYb21DprkRULce31my',
     'Finch',
     'Moderator',
-    (SELECT id FROM roles WHERE name='MODERATOR'),
-    1,
-    true
+    (SELECT id FROM roles WHERE name = 'MODERATOR'),
+    (SELECT id FROM companies WHERE name = 'Finch Studio'),
+    TRUE
 ),
 (
     'user@finch.pl',
     '$2a$12$fB2uG.TlFNStF8oc1ergQuZr/IU1XDOWkgMbYb21DprkRULce31my',
     'John',
     'User',
-    (SELECT id FROM roles WHERE name='USER'),
-    2,
-    true
+    (SELECT id FROM roles WHERE name = 'USER'),
+    (SELECT id FROM companies WHERE name = 'MediaCorp'),
+    TRUE
 );
 
 -- =========================
@@ -89,15 +90,25 @@ CREATE TABLE assignments (
     title VARCHAR(255) NOT NULL,
     description TEXT,
     video_path TEXT NOT NULL,
-    company_id INT REFERENCES companies(id),
+    company_id INT REFERENCES companies(id) ON DELETE SET NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 INSERT INTO assignments (title, description, video_path, company_id)
 VALUES
-('Promo Video', 'Create a promo video for Finch', 'public/uploads/sample1.mp4', 1),
-('Ad Campaign', 'Short ad for MediaCorp', 'public/uploads/sample2.mp4', 2);
+(
+    'Promo Video',
+    'Create a promo video for Finch',
+    'public/uploads/sample1.mp4',
+    (SELECT id FROM companies WHERE name = 'Finch Studio')
+),
+(
+    'Ad Campaign',
+    'Short ad for MediaCorp',
+    'public/uploads/sample2.mp4',
+    (SELECT id FROM companies WHERE name = 'MediaCorp')
+);
 
 -- =========================
 -- ASSIGNMENT_USERS (N:M)
@@ -109,8 +120,14 @@ CREATE TABLE assignment_users (
 );
 
 INSERT INTO assignment_users VALUES
-(1, 3),
-(2, 3);
+(
+    1,
+    (SELECT id FROM users WHERE email = 'user@finch.pl')
+),
+(
+    2,
+    (SELECT id FROM users WHERE email = 'user@finch.pl')
+);
 
 -- =========================
 -- COMMENTS (VIDEO TIMESTAMP)
@@ -126,8 +143,18 @@ CREATE TABLE comments (
 
 INSERT INTO comments (assignment_id, user_id, content, video_timestamp)
 VALUES
-(1, 3, 'Great footage, will start editing!', 12),
-(1, 2, 'Make sure to follow brand guidelines.', NULL);
+(
+    1,
+    (SELECT id FROM users WHERE email = 'user@finch.pl'),
+    'Great footage, will start editing!',
+    12
+),
+(
+    1,
+    (SELECT id FROM users WHERE email = 'moderator@finch.pl'),
+    'Make sure to follow brand guidelines.',
+    NULL
+);
 
 -- =========================
 -- VIEWS
