@@ -90,20 +90,37 @@ class CompanyController extends AppController
     {
         $this->checkAccess();
 
+        $company = $this->companyRepository->getById((int)$id);
+        if (!$company) {
+            $this->render('404');
+            return;
+        }
+
+        $this->ensureNotProtected($company);
+
         $this->companyRepository->delete((int)$id);
         header('Location: /manage-companies');
         exit;
     }
 
+
     public function deleteWithUsers($id)
     {
         $this->checkAccess();
 
-        $this->companyRepository->deleteWithUsers((int)$id);
+        $company = $this->companyRepository->getById((int)$id);
+        if (!$company) {
+            $this->render('404');
+            return;
+        }
 
+        $this->ensureNotProtected($company);
+
+        $this->companyRepository->deleteWithUsers((int)$id);
         header('Location: /manage-companies');
         exit;
     }
+
 
     private function ensureNotProtected(array $company)
     {

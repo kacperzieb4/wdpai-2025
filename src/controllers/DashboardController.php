@@ -1,32 +1,37 @@
 <?php
 
 require_once 'AppController.php';
-require_once __DIR__.'/../repository/AssignmentRepository.php';
+require_once __DIR__ . '/../repository/AssignmentRepository.php';
 
-class DashboardController extends AppController {
-
-    private $assignmentRepo;
+class DashboardController extends AppController
+{
+    private AssignmentRepository $assignmentRepository;
 
     public function __construct()
     {
         parent::__construct();
-        $this->assignmentRepo = new AssignmentRepository();
+        $this->assignmentRepository = new AssignmentRepository();
     }
 
     public function index()
     {
-        $this->requireLogin();
-
-        if ($_SESSION['user_role'] === 'USER') {
-            $assignments = $this->assignmentRepo
-                ->getUserAssignments($_SESSION['user_id']);
-        } else {
-            $assignments = $this->assignmentRepo->getAll();
+        if (!isset($_SESSION['user_id'])) {
+            header("Location: /login");
+            exit;
         }
 
-        $this->render('dashboard', [
-            'assignments' => $assignments
-        ]);
-    }
+        require_once __DIR__ . '/../repository/AssignmentRepository.php';
 
+        $assignmentRepository = new AssignmentRepository();
+
+        if ($_SESSION['user_role'] === 'USER') {
+            $assignments = $assignmentRepository->getUserAssignments(
+                $_SESSION['user_id']
+            );
+        } else {
+            $assignments = $assignmentRepository->getAllWithCompany();
+        }
+
+        require_once __DIR__ . '/../../public/views/dashboard.html';
+    }
 }

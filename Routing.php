@@ -251,6 +251,11 @@ class Routing {
                 $ctrl->deleteWithUsers($segments[1] ?? null);
                 break;
 
+            case 'delete-assignment':
+                $ctrl = new AssignmentController();
+                $ctrl->delete($segments[1] ?? null);
+                break;
+
             default:
                 include 'public/views/404.html';
                 break;

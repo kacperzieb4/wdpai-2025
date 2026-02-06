@@ -50,6 +50,14 @@
                 required
             >
 
+            <div id="uploadBox" class="upload-box" style="display:none;">
+                <div class="upload-bar">
+                    <div id="uploadProgress" class="upload-progress"></div>
+                </div>
+                <div id="uploadPercent" class="upload-percent">0%</div>
+            </div>
+
+
             <select name="company_id" required>
                 <option value="" disabled selected>
                     Select company
@@ -73,3 +81,45 @@
 
 </body>
 </html>
+
+<script>
+const form = document.querySelector('form');
+const uploadBox = document.getElementById('uploadBox');
+const progressBar = document.getElementById('uploadProgress');
+const percentText = document.getElementById('uploadPercent');
+
+form.addEventListener('submit', function (e) {
+    const fileInput = form.querySelector('input[type="file"]');
+
+    // jeśli NIE ma pliku → normalny submit
+    if (!fileInput || !fileInput.files.length) {
+        return;
+    }
+
+    e.preventDefault();
+
+    const xhr = new XMLHttpRequest();
+    const formData = new FormData(form);
+
+    uploadBox.style.display = 'block';
+
+    xhr.upload.addEventListener('progress', function (e) {
+        if (e.lengthComputable) {
+            const percent = Math.round((e.loaded / e.total) * 100);
+            progressBar.style.width = percent + '%';
+            percentText.textContent = percent + '%';
+        }
+    });
+
+    xhr.addEventListener('load', function () {
+        if (xhr.status === 200) {
+            window.location.href = '/assignments';
+        } else {
+            alert('Upload failed');
+        }
+    });
+
+    xhr.open('POST', window.location.href);
+    xhr.send(formData);
+});
+</script>

@@ -24,7 +24,7 @@ class AssignmentController
             exit();
         }
 
-        $assignments = $this->assignmentRepository->getAll();
+        $assignments = $this->assignmentRepository->getAllWithCompany();
         $users = $this->userRepository->getAllUsers();
         $companies = $this->companyRepository->getAll();
 
@@ -37,53 +37,51 @@ class AssignmentController
 
     public function create()
     {
-        // opcjonalnie: blokada dla USER
         if ($_SESSION['user_role'] === 'USER') {
-            include 'public/views/403.html';
+            $this->render('403');
             return;
         }
 
-        // ===== GET – pokaż formularz =====
-        if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-            $companies = $this->companyRepository->getAll();
+        require_once __DIR__ . '/../repository/AssignmentRepository.php';
+        require_once __DIR__ . '/../repository/CompanyRepository.php';
 
-            $this->render('create-assignment', [
-                'companies' => $companies
-            ]);
-            return;
-        }
+        $assignmentRepository = new AssignmentRepository();
+        $companyRepository = new CompanyRepository();
 
-        // ===== POST – zapisz assignment =====
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
             $title = $_POST['title'];
-            $desc = $_POST['description'];
-            $company = $_POST['company_id'];
+            $description = $_POST['description'] ?? null;
+            $companyId = $_POST['company_id'];
 
-            $video = $_FILES['video'];
+            $originalName = basename($_FILES['video']['name']);
+            $extension = pathinfo($originalName, PATHINFO_EXTENSION);
 
-            if ($video['error'] !== 0) {
-                die("Upload error");
-            }
+            $uniqueCode = uniqid();
 
-            $filename = uniqid() . '_' . basename($video['name']);
-            $target = "public/uploads/" . $filename;
+            $filename = $uniqueCode . '_' . $originalName;
 
-            move_uploaded_file($video['tmp_name'], $target);
+            $videoPath = 'public/uploads/' . $filename;
 
-            $this->assignmentRepository->create(
+            move_uploaded_file($_FILES['video']['tmp_name'], $videoPath);
+
+
+            $assignmentRepository->create(
                 $title,
-                $desc,
-                $target,
-                $company
+                $description,
+                $videoPath,
+                (int)$companyId
             );
 
-            header("Location: /assignments");
-            exit();
+            header('Location: /assignments');
+            exit;
         }
+
+        $companies = $companyRepository->getAll();
+
+        $this->render('create-assignment', [
+            'companies' => $companies
+        ]);
     }
-
-
 
     public function assignUser()
     {
@@ -106,13 +104,98 @@ class AssignmentController
 
     public function edit($id)
     {
-        $assignment = $this->assignmentRepository->getAssignment($id);
-        $companies = $this->companyRepository->getAll();
+        if ($_SESSION['user_role'] === 'USER') {
+            $this->render('403');
+            return;
+        }
+
+        require_once __DIR__ . '/../repository/AssignmentRepository.php';
+        require_once __DIR__ . '/../repository/CompanyRepository.php';
+
+        $assignmentRepository = new AssignmentRepository();
+        $companyRepository = new CompanyRepository();
+
+        $assignment = $assignmentRepository->getAssignment((int)$id);
+        if (!$assignment) {
+            $this->render('404');
+            return;
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $title = $_POST['title'];
+            $description = $_POST['description'] ?? null;
+            $companyId = (int)$_POST['company_id'];
+
+            $newVideoPath = null;
+
+            if (!empty($_FILES['video']['name'])) {
+
+                if (!empty($assignment['video_path'])) {
+                    $oldFile = __DIR__ . '/../../' . $assignment['video_path'];
+                    if (file_exists($oldFile)) {
+                        unlink($oldFile);
+                    }
+                }
+
+                $originalName = basename($_FILES['video']['name']);
+                $uniqueCode = uniqid();
+                $filename = $uniqueCode . '_' . $originalName;
+                $newVideoPath = 'public/uploads/' . $filename;
+
+                move_uploaded_file(
+                    $_FILES['video']['tmp_name'],
+                    __DIR__ . '/../../' . $newVideoPath
+                );
+            }
+
+            $assignmentRepository->update(
+                (int)$id,
+                $title,
+                $description,
+                $companyId,
+                $newVideoPath
+            );
+
+            header('Location: /assignments');
+            exit;
+        }
+
+        $companies = $companyRepository->getAll();
 
         $this->render('edit-assignment', [
             'assignment' => $assignment,
             'companies' => $companies
         ]);
     }
+    
+    public function delete($id)
+    {
+        if ($_SESSION['user_role'] === 'USER') {
+            $this->render('403');
+            return;
+        }
+
+        require_once __DIR__ . '/../repository/AssignmentRepository.php';
+
+        $assignmentRepository = new AssignmentRepository();
+
+        $assignment = $assignmentRepository->getAssignment((int)$id);
+        if (!$assignment) {
+            $this->render('404');
+            return;
+        }
+
+        $filePath = __DIR__ . '/../../' . $assignment['video_path'];
+
+        if (file_exists($filePath)) {
+            unlink($filePath);
+        }
+
+        $assignmentRepository->delete((int)$id);
+
+        header('Location: /assignments');
+        exit;
+    }
+
 
 }

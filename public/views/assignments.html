@@ -19,34 +19,54 @@
 
 <main class="content">
 
-    <!-- TYTUŁ -->
     <h1>Assignments</h1>
 
-    <!-- CREATE ASSIGNMENT -->
-    <div class="admin-panel">
-        <a href="/create-assignment" class="admin-tile">
-            ➕ Create assignment
-        </a>
-    </div>
+    <?php if ($_SESSION['user_role'] !== 'USER'): ?>
+        <div class="admin-panel">
+            <a href="/create-assignment" class="admin-tile">
+                ➕ Create assignment
+            </a>
+        </div>
+    <?php endif; ?>
 
-    <!-- LISTA -->
-    <h2>Actual assignments:</h2>
+    <h2>Assignments list:</h2>
 
     <div class="files-list">
-        <?php foreach ($assignments as $a): ?>
-            <div class="file-tile">
-                <div class="file-info">
-                    <span>🎬</span>
-                    <span class="file-name"><?= $a['title'] ?></span>
-                </div>
+    <?php foreach ($assignments as $a): ?>
 
-                <div>
-                    <a href="/assignment/<?= $a['id'] ?>" class="watch-btn">View</a>
-                    <a href="/edit-assignment/<?= $a['id'] ?>" class="watch-btn">Edit</a>
-                </div>
+        <div class="file-tile">
+            <div class="file-info">
+                <span>🎬</span>
+
+                <span class="file-name">
+                    <?= htmlspecialchars($a['title']) ?>
+                    <span class="company-inline">
+                        <?= htmlspecialchars($a['company'] ?? '— no company —') ?>
+                    </span>
+                </span>
             </div>
-        <?php endforeach; ?>
-    </div>
+
+            <div class="file-actions">
+                <a href="/assignment/<?= $a['id'] ?>" class="watch-btn">
+                    View
+                </a>
+
+                <?php if ($_SESSION['user_role'] !== 'USER'): ?>
+                    <a href="/edit-assignment/<?= $a['id'] ?>" class="watch-btn">
+                        Edit
+                    </a>
+
+                    <a href="/delete-assignment/<?= $a['id'] ?>"
+                       class="watch-btn danger">
+                        Delete
+                    </a>
+                <?php endif; ?>
+            </div>
+        </div>
+
+    <?php endforeach; ?>
+</div>
+
 
 </main>
 
