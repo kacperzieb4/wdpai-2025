@@ -20,16 +20,22 @@ class DashboardController extends AppController
             exit;
         }
 
-        require_once __DIR__ . '/../repository/AssignmentRepository.php';
-
-        $assignmentRepository = new AssignmentRepository();
-
-        if ($_SESSION['user_role'] === 'USER') {
-            $assignments = $assignmentRepository->getUserAssignments(
-                $_SESSION['user_id']
-            );
-        } else {
-            $assignments = $assignmentRepository->getAllWithCompany();
+        // ADMIN / MODERATOR → wszystkie zlecenia
+        if (
+            $_SESSION['user_role'] === 'ADMIN'
+            || $_SESSION['user_role'] === 'MODERATOR'
+        ) {
+            $assignments = $this->assignmentRepository->getAllWithCompany();
+        }
+        // USER → tylko zlecenia swojej firmy
+        else {
+            if (empty($_SESSION['user_company_id'])) {
+                $assignments = [];
+            } else {
+                $assignments = $this->assignmentRepository->getByCompanyId(
+                    $_SESSION['user_company_id']
+                );
+            }
         }
 
         require_once __DIR__ . '/../../public/views/dashboard.html';

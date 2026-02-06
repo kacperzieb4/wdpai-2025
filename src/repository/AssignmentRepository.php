@@ -190,6 +190,24 @@ class AssignmentRepository extends Repository
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    public function getByCompanyId(int $companyId): array
+    {
+        $stmt = $this->database->connect()->prepare("
+            SELECT a.id, a.title, c.name AS company
+            FROM assignments a
+            JOIN companies c ON a.company_id = c.id
+            WHERE a.company_id = :company_id
+            ORDER BY a.created_at DESC
+        ");
+
+        $stmt->execute([
+            'company_id' => $companyId
+        ]);
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+
 
 
 

@@ -2,7 +2,6 @@
 -- CLEAN START
 -- =========================
 DROP TABLE IF EXISTS comments CASCADE;
-DROP TABLE IF EXISTS assignment_users CASCADE;
 DROP TABLE IF EXISTS assignments CASCADE;
 DROP TABLE IF EXISTS users CASCADE;
 DROP TABLE IF EXISTS companies CASCADE;
@@ -27,11 +26,11 @@ INSERT INTO roles (name) VALUES
 CREATE TABLE companies (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) UNIQUE NOT NULL,
-    is_protected BOOLEAN DEFAULT FALSE -- 🔒 firma systemowa
+    is_protected BOOLEAN DEFAULT FALSE
 );
 
 INSERT INTO companies (name, is_protected) VALUES
-('Finch Studio', TRUE),   -- 👑 firma święta (admin/moderator)
+('Finch Studio', TRUE),
 ('MediaCorp', FALSE),
 ('VisionX', FALSE);
 
@@ -41,13 +40,13 @@ INSERT INTO companies (name, is_protected) VALUES
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
     email VARCHAR(255) UNIQUE NOT NULL,
-    password TEXT, -- 🔑 może być NULL do aktywacji
+    password TEXT,
     firstname VARCHAR(100),
     lastname VARCHAR(100),
-    role_id INT REFERENCES roles(id),
+    role_id INT NOT NULL REFERENCES roles(id),
     company_id INT REFERENCES companies(id) ON DELETE SET NULL,
     activation_code VARCHAR(100),
-    is_active BOOLEAN DEFAULT FALSE, -- 🔒 nowy user nieaktywny
+    is_active BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -90,7 +89,7 @@ CREATE TABLE assignments (
     title VARCHAR(255) NOT NULL,
     description TEXT,
     video_path TEXT NOT NULL,
-    company_id INT REFERENCES companies(id) ON DELETE SET NULL,
+    company_id INT NOT NULL REFERENCES companies(id),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -108,34 +107,21 @@ VALUES
     'Short ad for MediaCorp',
     'public/uploads/sample2.mp4',
     (SELECT id FROM companies WHERE name = 'MediaCorp')
-);
-
--- =========================
--- ASSIGNMENT_USERS (N:M)
--- =========================
-CREATE TABLE assignment_users (
-    assignment_id INT REFERENCES assignments(id) ON DELETE CASCADE,
-    user_id INT REFERENCES users(id) ON DELETE CASCADE,
-    PRIMARY KEY (assignment_id, user_id)
-);
-
-INSERT INTO assignment_users VALUES
-(
-    1,
-    (SELECT id FROM users WHERE email = 'user@finch.pl')
 ),
 (
-    2,
-    (SELECT id FROM users WHERE email = 'user@finch.pl')
+    'VisionX Teaser',
+    'Product teaser video',
+    'public/uploads/sample3.mp4',
+    (SELECT id FROM companies WHERE name = 'VisionX')
 );
 
 -- =========================
--- COMMENTS (VIDEO TIMESTAMP)
+-- COMMENTS
 -- =========================
 CREATE TABLE comments (
     id SERIAL PRIMARY KEY,
-    assignment_id INT REFERENCES assignments(id) ON DELETE CASCADE,
-    user_id INT REFERENCES users(id) ON DELETE CASCADE,
+    assignment_id INT NOT NULL REFERENCES assignments(id) ON DELETE CASCADE,
+    user_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     content TEXT NOT NULL,
     video_timestamp INT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -144,13 +130,13 @@ CREATE TABLE comments (
 INSERT INTO comments (assignment_id, user_id, content, video_timestamp)
 VALUES
 (
-    1,
+    (SELECT id FROM assignments WHERE title = 'Promo Video'),
     (SELECT id FROM users WHERE email = 'user@finch.pl'),
     'Great footage, will start editing!',
     12
 ),
 (
-    1,
+    (SELECT id FROM assignments WHERE title = 'Promo Video'),
     (SELECT id FROM users WHERE email = 'moderator@finch.pl'),
     'Make sure to follow brand guidelines.',
     NULL
@@ -167,18 +153,6 @@ SELECT
 FROM assignments a
 LEFT JOIN comments c ON a.id = c.assignment_id
 GROUP BY a.id;
-
-CREATE VIEW user_assignments_count AS
-SELECT 
-    u.id,
-    u.firstname,
-    u.lastname,
-    r.name AS role,
-    COUNT(au.assignment_id) AS assignments
-FROM users u
-JOIN roles r ON u.role_id = r.id
-LEFT JOIN assignment_users au ON u.id = au.user_id
-GROUP BY u.id, r.name;
 
 -- =========================
 -- FUNCTION

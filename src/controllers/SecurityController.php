@@ -40,6 +40,7 @@ class SecurityController
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['user_firstname'] = $user['firstname'];
             $_SESSION['user_role'] = $user['role'];
+            $_SESSION['user_company_id'] = $user['company_id'];
 
             header("Location: /dashboard");
             exit();
