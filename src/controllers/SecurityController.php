@@ -27,7 +27,7 @@ class SecurityController
 
             if (!$user['is_active']) {
                 $messages[] = "Account not activated yet.";
-                include 'public/views/login.html';
+                include 'public/views/login.php';
                 return;
             }
 
@@ -95,6 +95,6 @@ class SecurityController
     private function render(string $view, array $params = [])
     {
         extract($params);
-        include "public/views/$view.html";
+        include "public/views/$view.php";
     }
 }

@@ -99,7 +99,7 @@ class AssignmentController
     private function render(string $view, array $params = [])
     {
         extract($params);
-        include "public/views/$view.html";
+        include "public/views/$view.php";
     }
 
     public function edit($id)

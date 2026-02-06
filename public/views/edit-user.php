@@ -7,16 +7,11 @@
 
     <link rel="stylesheet" href="/public/styles/dashboard.css">
     <link rel="stylesheet" href="/public/styles/create-user.css">
+    <link rel="stylesheet" href="/public/styles/header.css">
 </head>
 <body>
 
-<header class="top-bar">
-    <div class="logo">FINCH</div>
-    <nav>
-        <a href="/manage-users">Users</a>
-        <a href="/logout" class="logout">Log out</a>
-    </nav>
-</header>
+<?php require __DIR__ . '/partials/header.php'; ?>
 
 <main class="content">
 
@@ -46,11 +41,9 @@
                    value="<?= htmlspecialchars($user['lastname']) ?>"
                    required>
 
-            <!-- ROLE -->
             <select name="role_id" id="roleSelect" required>
                 <?php foreach ($roles as $role): ?>
                     <?php
-                        // moderator nie może ustawić ADMIN
                         if ($_SESSION['user_role'] === 'MODERATOR' && $role['name'] === 'ADMIN') {
                             continue;
                         }
@@ -62,7 +55,6 @@
                 <?php endforeach; ?>
             </select>
 
-            <!-- COMPANY -->
             <select name="company_id" id="companySelect">
                 <?php foreach ($companies as $company): ?>
                     <option value="<?= $company['id'] ?>"
@@ -99,7 +91,6 @@ function updateCompanyField() {
 
 roleSelect.addEventListener('change', updateCompanyField);
 
-// 🔥 KLUCZ: wykonanie przy wejściu na stronę
 updateCompanyField();
 </script>
 

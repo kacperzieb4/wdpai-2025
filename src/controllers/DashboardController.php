@@ -20,14 +20,12 @@ class DashboardController extends AppController
             exit;
         }
 
-        // ADMIN / MODERATOR → wszystkie zlecenia
         if (
             $_SESSION['user_role'] === 'ADMIN'
             || $_SESSION['user_role'] === 'MODERATOR'
         ) {
             $assignments = $this->assignmentRepository->getAllWithCompany();
         }
-        // USER → tylko zlecenia swojej firmy
         else {
             if (empty($_SESSION['user_company_id'])) {
                 $assignments = [];
@@ -38,6 +36,6 @@ class DashboardController extends AppController
             }
         }
 
-        require_once __DIR__ . '/../../public/views/dashboard.html';
+        require_once __DIR__ . '/../../public/views/dashboard.php';
     }
 }

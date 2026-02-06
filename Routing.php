@@ -17,19 +17,13 @@ class Routing
         $segments = explode('/', trim($path, '/'));
         $route = $segments[0] ?? '';
 
-        /* =========================
-           HOME
-           ========================= */
         if ($route === '') {
-            require 'public/views/home.html';
+            require 'public/views/home.php';
             return;
         }
 
         switch ($route) {
 
-            /* =========================
-               AUTH
-               ========================= */
             case 'login':
                 (new SecurityController())->login();
                 break;
@@ -46,16 +40,10 @@ class Routing
                 (new RegisterController())->register();
                 break;
 
-            /* =========================
-               DASHBOARD
-               ========================= */
             case 'dashboard':
                 (new DashboardController())->index();
                 break;
 
-            /* =========================
-               USERS
-               ========================= */
             case 'manage-users':
                 (new UserController())->index();
                 break;
@@ -80,9 +68,6 @@ class Routing
                 (new UserController())->show($segments[1]);
                 break;
 
-            /* =========================
-               COMPANIES
-               ========================= */
             case 'manage-companies':
                 (new CompanyController())->index();
                 break;
@@ -103,9 +88,6 @@ class Routing
                 (new CompanyController())->deleteWithUsers($segments[1] ?? null);
                 break;
 
-            /* =========================
-               ASSIGNMENTS (CRUD)
-               ========================= */
             case 'assignments':
                 (new AssignmentController())->index();
                 break;
@@ -122,9 +104,6 @@ class Routing
                 (new AssignmentController())->assignUser();
                 break;
 
-            /* =========================
-               ASSIGNMENT VIEW + COMMENTS
-               ========================= */
             case 'assignment':
                 (new AssignmentViewController())->show($segments[1] ?? null);
                 break;
@@ -141,9 +120,6 @@ class Routing
                 (new AssignmentViewController())->deleteComment($segments[1] ?? null);
                 break;
 
-            /* =========================
-               MODERATOR / ADMIN
-               ========================= */
             case 'moderator':
                 (new ModeratorController())->index();
                 break;
@@ -160,11 +136,8 @@ class Routing
                 (new AdminController())->index();
                 break;
 
-            /* =========================
-               404
-               ========================= */
             default:
-                require 'public/views/404.html';
+                require 'public/views/404.php';
                 break;
         }
     }

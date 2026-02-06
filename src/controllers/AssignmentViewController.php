@@ -29,13 +29,13 @@ class AssignmentViewController
 
         $assignment = $this->assignmentRepository->getAssignment((int)$id);
         if (!$assignment) {
-            require 'public/views/404.html';
+            require 'public/views/404.php';
             return;
         }
 
         $comments = $this->commentRepository->getByAssignmentId((int)$id);
 
-        require 'public/views/assignment-view.html';
+        require 'public/views/assignment-view.php';
     }
 
     public function addComment()
@@ -78,7 +78,7 @@ class AssignmentViewController
             || in_array($_SESSION['user_role'], ['ADMIN', 'MODERATOR']);
 
         if (!$canDelete) {
-            require 'public/views/403.html';
+            require 'public/views/403.php';
             return;
         }
 
@@ -101,7 +101,7 @@ class AssignmentViewController
             || in_array($_SESSION['user_role'], ['ADMIN', 'MODERATOR']);
 
         if (!$canEdit) {
-            require 'public/views/403.html';
+            require 'public/views/403.php';
             return;
         }
 

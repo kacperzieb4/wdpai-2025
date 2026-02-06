@@ -9,6 +9,6 @@ class AdminController extends AppController {
         $this->requireLogin();
         $this->requireRole('ADMIN');
 
-        require 'public/views/admin.html';
+        require 'public/views/admin.php';
     }
 }

@@ -4,36 +4,30 @@
     <meta charset="UTF-8">
     <title><?= htmlspecialchars($assignment['title']) ?></title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
     <link rel="stylesheet" href="/public/styles/assignment.css">
+    <link rel="stylesheet" href="/public/styles/header.css">
 </head>
 <body>
 
-<header class="top-bar">
-    <div class="logo">FINCH</div>
-    <nav>
-        <a href="/logout" class="logout">Log out</a>
-    </nav>
-</header>
+<?php require __DIR__ . '/partials/header.php'; ?>
 
 <main class="assignment-wrapper">
 
     <h1 class="file-title"><?= htmlspecialchars($assignment['title']) ?></h1>
 
-    <!-- VIDEO -->
     <div class="video-box">
         <video id="assignmentVideo" controls>
             <source src="/<?= htmlspecialchars($assignment['video_path']) ?>" type="video/mp4">
         </video>
     </div>
 
-    <!-- DOWNLOAD -->
     <div class="download-box">
         <a href="/<?= htmlspecialchars($assignment['video_path']) ?>" download class="download-btn">
             ⬇ Download
         </a>
     </div>
 
-    <!-- DESCRIPTION -->
     <?php if (!empty($assignment['description'])): ?>
         <h3 class="section-title">Description:</h3>
         <div class="assignment-description">
@@ -41,7 +35,6 @@
         </div>
     <?php endif; ?>
 
-    <!-- NEW COMMENT -->
     <h3 class="section-title">New Comment:</h3>
 
     <div class="comment new-comment">
@@ -65,7 +58,6 @@
         </form>
     </div>
 
-    <!-- COMMENTS -->
     <h3 class="section-title">Comments:</h3>
 
     <?php foreach ($comments as $comment): ?>

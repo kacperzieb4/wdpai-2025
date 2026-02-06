@@ -15,7 +15,7 @@ class RegisterController extends AppController {
 
     public function index()
     {
-        require 'public/views/register.html';
+        require 'public/views/register.php';
     }
 
     public function register()
@@ -27,7 +27,7 @@ class RegisterController extends AppController {
 
         if ($pass1 !== $pass2) {
             $messages[] = "Passwords do not match";
-            include 'public/views/register.html';
+            include 'public/views/register.php';
             return;
         }
 
@@ -44,7 +44,7 @@ class RegisterController extends AppController {
 
         if (!$user) {
             $messages[] = "Invalid activation code or account already active";
-            include 'public/views/register.html';
+            include 'public/views/register.php';
             return;
         }
 
@@ -58,7 +58,7 @@ class RegisterController extends AppController {
         $stmt->execute([$hash, $user['id']]);
 
         $messages[] = "Account activated! You can now log in.";
-        include 'public/views/login.html';
+        include 'public/views/login.php';
     }
 
 }

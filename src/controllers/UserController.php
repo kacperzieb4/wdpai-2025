@@ -23,9 +23,9 @@ class UserController extends AppController
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             $companies = $this->companyRepository->getAll();
-            $roles = ['ADMIN', 'MODERATOR', 'USER']; // 🔹 zgodnie z DB
+            $roles = ['ADMIN', 'MODERATOR', 'USER'];
 
-            require_once 'public/views/create-user.html';
+            require_once 'public/views/create-user.php';
             return;
         }
 
@@ -33,46 +33,43 @@ class UserController extends AppController
         $firstname = trim($_POST['firstname']);
         $lastname = trim($_POST['lastname']);
 
-        // 🔹 FORMULARZ WYSYŁA NAZWĘ ROLI
         if (!isset($_POST['role'])) {
             $error = 'Role is required';
             $companies = $this->companyRepository->getAll();
             $roles = ['ADMIN', 'MODERATOR', 'USER'];
-            require_once 'public/views/create-user.html';
+            require_once 'public/views/create-user.php';
             return;
         }
 
-        $roleName = $_POST['role']; // ADMIN / MODERATOR / USER
+        $roleName = $_POST['role'];
         $roleId = $this->userRepository->getRoleIdByName($roleName);
 
         if (!$roleId) {
             $error = 'Invalid role';
             $companies = $this->companyRepository->getAll();
             $roles = ['ADMIN', 'MODERATOR', 'USER'];
-            require_once 'public/views/create-user.html';
+            require_once 'public/views/create-user.php';
             return;
         }
 
-        // 🔒 LOGIKA FIRMY
         if ($roleName === 'ADMIN' || $roleName === 'MODERATOR') {
-            $companyId = 1; // Finch Studio
+            $companyId = 1; 
         } else {
             if (empty($_POST['company'])) {
                 $error = 'Company is required';
                 $companies = $this->companyRepository->getAll();
                 $roles = ['ADMIN', 'MODERATOR', 'USER'];
-                require_once 'public/views/create-user.html';
+                require_once 'public/views/create-user.php';
                 return;
             }
             $companyId = (int) $_POST['company'];
         }
 
-        // ❌ EMAIL JUŻ ISTNIEJE
         if ($this->userRepository->getUserByEmail($email)) {
             $error = 'User with this email already exists';
             $companies = $this->companyRepository->getAll();
             $roles = ['ADMIN', 'MODERATOR', 'USER'];
-            require_once 'public/views/create-user.html';
+            require_once 'public/views/create-user.php';
             return;
         }
 
@@ -80,16 +77,12 @@ class UserController extends AppController
             $error = 'You are not allowed to create admin users.';
             $companies = $this->companyRepository->getAll();
             $roles = ['ADMIN', 'MODERATOR', 'USER'];
-            require 'public/views/create-user.html';
+            require 'public/views/create-user.php';
             return;
         }
 
-
-
-        // 🔑 KOD AKTYWACYJNY
         $activationCode = bin2hex(random_bytes(16));
 
-        // ✅ POPRAWNE WYWOŁANIE
         $this->userRepository->createInactiveUser(
             $email,
             $firstname,
@@ -99,15 +92,12 @@ class UserController extends AppController
             $activationCode
         );
 
-        // ✅ POKAZUJEMY KOD, NIE REDIRECT
         $successCode = $activationCode;
         $companies = $this->companyRepository->getAll();
         $roles = ['ADMIN', 'MODERATOR', 'USER'];
 
-        require_once 'public/views/create-user.html';
+        require_once 'public/views/create-user.php';
     }
-
-
 
     public function index()
     {
@@ -127,7 +117,7 @@ class UserController extends AppController
         $companies = $this->companyRepository->getAll();
 
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            require 'public/views/edit-user.html';
+            require 'public/views/edit-user.php';
             return;
         }
 
@@ -136,7 +126,6 @@ class UserController extends AppController
         $roleId = (int) $_POST['role_id'];
         $companyId = $_POST['company_id'] ?? null;
 
-        // 🔎 nazwa roli
         $roleName = null;
         foreach ($roles as $r) {
             if ($r['id'] == $roleId) {
@@ -147,26 +136,23 @@ class UserController extends AppController
 
         if (!$roleName) {
             $error = 'Invalid role';
-            require 'public/views/edit-user.html';
+            require 'public/views/edit-user.php';
             return;
         }
 
-        // 🔒 MODERATOR nie może ustawić ADMINA
         if ($_SESSION['user_role'] === 'MODERATOR' && $roleName === 'ADMIN') {
             $error = 'You are not allowed to assign ADMIN role';
-            require 'public/views/edit-user.html';
+            require 'public/views/edit-user.php';
             return;
         }
 
-        // 🔒 ADMIN + MODERATOR → zawsze Finch Studio
         if ($roleName === 'ADMIN' || $roleName === 'MODERATOR') {
-            $companyId = 1; // Finch Studio
+            $companyId = 1;
         }
 
-        // 🔒 USER musi mieć firmę
         if ($roleName === 'USER' && !$companyId) {
             $error = 'User must be assigned to a company';
-            require 'public/views/edit-user.html';
+            require 'public/views/edit-user.php';
             return;
         }
 
@@ -181,8 +167,6 @@ class UserController extends AppController
         header('Location: /manage-users');
         exit;
     }
-
-
 
     public function delete($id)
     {

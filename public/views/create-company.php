@@ -7,16 +7,11 @@
 
     <link rel="stylesheet" href="/public/styles/dashboard.css">
     <link rel="stylesheet" href="/public/styles/create-user.css">
+    <link rel="stylesheet" href="/public/styles/header.css">
 </head>
 <body>
 
-<header class="top-bar">
-    <div class="logo">FINCH</div>
-    <nav>
-        <a href="/manage-companies">Companies</a>
-        <a href="/logout" class="logout">Log out</a>
-    </nav>
-</header>
+<?php require __DIR__ . '/partials/header.php'; ?>
 
 <main class="content">
 

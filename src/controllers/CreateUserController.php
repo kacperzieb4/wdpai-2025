@@ -4,10 +4,6 @@ require_once 'Database.php';
 
 class CreateUserController
 {
-    /* 
-     * Router może wołać różne metody.
-     * Każda z nich przekazuje do wspólnej logiki.
-     */
 
     public function index()
     {
@@ -29,12 +25,10 @@ class CreateUserController
         $db = new Database();
         $conn = $db->connect();
 
-        // ROLE – MUSZĄ BYĆ
         $roles = $conn
             ->query("SELECT id, name FROM roles ORDER BY name")
             ->fetchAll(PDO::FETCH_ASSOC);
 
-        // FIRMY – MUSZĄ BYĆ
         $companies = $conn
             ->query("SELECT id, name FROM companies ORDER BY name")
             ->fetchAll(PDO::FETCH_ASSOC);
@@ -65,6 +59,6 @@ class CreateUserController
                 "User created successfully. Activation code: {$activationCode}";
         }
 
-        require 'public/views/create-user.html';
+        require 'public/views/create-user.php';
     }
 }

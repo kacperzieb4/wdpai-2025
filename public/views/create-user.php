@@ -7,23 +7,16 @@
 
     <link rel="stylesheet" href="/public/styles/dashboard.css">
     <link rel="stylesheet" href="/public/styles/create-user.css">
+    <link rel="stylesheet" href="/public/styles/header.css">
 </head>
 <body>
 
-<header class="top-bar">
-    <div class="logo">FINCH</div>
-    <nav>
-        <a href="/dashboard">Dashboard</a>
-        <a href="/manage-users">Users</a>
-        <a href="/logout" class="logout">Log out</a>
-    </nav>
-</header>
+<?php require __DIR__ . '/partials/header.php'; ?>
 
 <main class="create-user-wrapper">
 
     <h1>Create user</h1>
 
-    <!-- SUCCESS -->
     <?php if (!empty($successCode)): ?>
         <div class="message-box">
             User created successfully.<br>
@@ -34,14 +27,12 @@
         </div>
     <?php endif; ?>
 
-    <!-- ERROR -->
     <?php if (!empty($error)): ?>
         <div class="message-box error">
             <?= htmlspecialchars($error) ?>
         </div>
     <?php endif; ?>
 
-    <!-- FORM -->
     <div class="create-user-card">
         <form method="POST" class="create-user-form">
 
@@ -66,7 +57,6 @@
                 required
             >
 
-            <!-- ROLE -->
             <select name="role" id="roleSelect" required>
                 <option value="" disabled selected>Role</option>
                 <?php foreach ($roles as $role): ?>
@@ -82,7 +72,6 @@
                 <?php endforeach; ?>
             </select>
 
-            <!-- COMPANY -->
             <select name="company" id="companySelect">
                 <option value="" disabled selected>Company</option>
                 <?php foreach ($companies as $company): ?>

@@ -4,25 +4,19 @@
     <meta charset="UTF-8">
     <title>FINCH – Moderator Panel</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <link rel="stylesheet" href="public/styles/dashboard.css">
+    <link rel="stylesheet" href="public/styles/header.css">
 </head>
 <body>
 
-<header class="header">
-    <img src="public/images/logo.png" class="logo">
-
-    <nav>
-        <a href="/dashboard">Dashboard</a>
-        <a href="/logout" class="logout-btn">Log out</a>
-    </nav>
-</header>
+<?php require __DIR__ . '/partials/header.php'; ?>
 
 <main class="dashboard">
 
     <h1>Moderator Panel</h1>
     <p>Manage companies and users.</p>
 
-    <!-- CREATE COMPANY -->
     <div class="card">
         <h2>Create Company</h2>
 
@@ -36,7 +30,6 @@
         </form>
     </div>
 
-    <!-- CREATE USER -->
     <div class="card">
         <h2>Add User to Company</h2>
 

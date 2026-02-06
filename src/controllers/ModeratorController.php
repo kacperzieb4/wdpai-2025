@@ -23,7 +23,7 @@ class ModeratorController extends AppController {
 
         $companies = $this->companyRepo->getAll();
 
-        require 'public/views/moderator.html';
+        require 'public/views/moderator.php';
     }
 
     public function createCompany()
@@ -53,7 +53,6 @@ class ModeratorController extends AppController {
             $code
         );
 
-        // MAIL (na razie prosty)
         mail(
             $_POST['email'],
             "FINCH Activation",

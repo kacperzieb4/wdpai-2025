@@ -2,42 +2,29 @@
 <html lang="pl">
 <head>
     <meta charset="UTF-8">
-    <title>Edit assignment</title>
+    <title>Create assignment</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <!-- reuse exact same styles as create -->
+    
+    <link rel="stylesheet" href="/public/styles/header.css">
     <link rel="stylesheet" href="/public/styles/dashboard.css">
     <link rel="stylesheet" href="/public/styles/create-user.css">
 </head>
 <body>
 
-<header class="top-bar">
-    <div class="logo">FINCH</div>
-    <nav>
-        <a href="/assignments">Assignments</a>
-        <a href="/dashboard">Dashboard</a>
-        <a href="/logout" class="logout">Log out</a>
-    </nav>
-</header>
+<?php require __DIR__ . '/partials/header.php'; ?>
 
 <main class="content">
 
-    <h1 class="page-title">Edit assignment</h1>
+    <h1 class="page-title">Create assignment</h1>
 
-    <!-- FORM CARD -->
     <div class="card">
 
-        <form
-            method="POST"
-            action="/edit-assignment/<?= $assignment['id'] ?>"
-            enctype="multipart/form-data"
-        >
+        <form method="POST" action="/create-assignment" enctype="multipart/form-data">
 
             <input
                 type="text"
                 name="title"
                 placeholder="Assignment title"
-                value="<?= htmlspecialchars($assignment['title']) ?>"
                 required
             >
 
@@ -45,12 +32,14 @@
                 name="description"
                 placeholder="Assignment description (optional)"
                 rows="4"
-            ><?= htmlspecialchars($assignment['description'] ?? '') ?></textarea>
+            ></textarea>
+
 
             <input
                 type="file"
                 name="video"
                 accept="video/*"
+                required
             >
 
             <div id="uploadBox" class="upload-box" style="display:none;">
@@ -60,23 +49,20 @@
                 <div id="uploadPercent" class="upload-percent">0%</div>
             </div>
 
+
             <select name="company_id" required>
-                <option value="" disabled>
+                <option value="" disabled selected>
                     Select company
                 </option>
-
                 <?php foreach ($companies as $c): ?>
-                    <option
-                        value="<?= $c['id'] ?>"
-                        <?= $c['id'] == $assignment['company_id'] ? 'selected' : '' ?>
-                    >
+                    <option value="<?= $c['id'] ?>">
                         <?= htmlspecialchars($c['name']) ?>
                     </option>
                 <?php endforeach; ?>
             </select>
 
             <button type="submit" class="btn-primary">
-                Save changes
+                Create assignment
             </button>
 
         </form>

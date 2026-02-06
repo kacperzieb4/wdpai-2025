@@ -29,8 +29,8 @@ class AppController {
 
     protected function render(string $template = null, array $variables = [])
     {
-        $templatePath = 'public/views/'. $template.'.html';
-        $templatePath404 = 'public/views/404.html';
+        $templatePath = 'public/views/'. $template.'.php';
+        $templatePath404 = 'public/views/404.php';
 
         if (file_exists($templatePath)) {
             extract($variables);
@@ -46,7 +46,7 @@ class AppController {
     {
         if (empty($_SESSION['user_role']) || $_SESSION['user_role'] !== $role) {
             http_response_code(403);
-            include 'public/views/403.html';
+            include 'public/views/403.php';
             exit();
         }
     }

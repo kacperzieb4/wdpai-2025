@@ -26,13 +26,3 @@ search.addEventListener("keyup", function (event) {
         });
     }
 });
-function createCard(card) {
-    const template = document.querySelector("#card-template");
-    const clone = template.content.cloneNode(true);
-
-    clone.querySelector("img").src = card.image;
-    clone.querySelector("h2").innerText = card.title;
-    clone.querySelector("p").innerText = card.description;
-
-    cardsContainer.appendChild(clone);
-}

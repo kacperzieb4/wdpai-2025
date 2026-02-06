@@ -6,29 +6,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <link rel="stylesheet" href="/public/styles/dashboard.css">
+    <link rel="stylesheet" href="/public/styles/header.css">
 </head>
 <body>
 
-<header class="top-bar">
-    <div class="logo">FINCH</div>
-    <nav>
-        <a href="/dashboard">Dashboard</a>
-        <a href="/logout" class="logout">Log out</a>
-    </nav>
-</header>
+<?php require __DIR__ . '/partials/header.php'; ?>
 
 <main class="content">
 
     <h1>Users</h1>
 
-    <!-- CREATE USER -->
     <div class="admin-panel">
         <a href="/create-user" class="admin-tile">
             ➕ Create user
         </a>
     </div>
 
-    <!-- LIST -->
     <h2>User list:</h2>
 
     <div class="files-list">
