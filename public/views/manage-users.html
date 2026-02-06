@@ -39,6 +39,10 @@
                     <span class="file-name">
                         <?= htmlspecialchars($u['firstname']) ?>
                         <?= htmlspecialchars($u['lastname']) ?>
+
+                        <span class="role-badge <?= strtolower($u['role']) ?>">
+                            <?= htmlspecialchars($u['role']) ?>
+                        </span>
                     </span>
                     <small>
                         <?= $u['company'] ?? '— no company —' ?>
@@ -47,7 +51,12 @@
 
                 <div>
                     <a href="/edit-user/<?= $u['id'] ?>" class="watch-btn">Edit</a>
-                    <a href="/delete-user/<?= $u['id'] ?>" class="watch-btn">Delete</a>
+                    <?php if ($u['id'] != $_SESSION['user_id']): ?>
+                        <a href="/delete-user/<?= $u['id'] ?>" class="watch-btn">Delete</a>
+                    <?php else: ?>
+                        <span class="watch-btn disabled">Delete</span>
+                    <?php endif; ?>
+
                 </div>
             </div>
         <?php endforeach; ?>

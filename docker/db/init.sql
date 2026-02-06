@@ -40,13 +40,13 @@ INSERT INTO companies (name) VALUES
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
     email VARCHAR(255) UNIQUE NOT NULL,
-    password TEXT NOT NULL,
+    password TEXT, -- 🔑 może być NULL do aktywacji
     firstname VARCHAR(100),
     lastname VARCHAR(100),
     role_id INT REFERENCES roles(id),
     company_id INT REFERENCES companies(id),
     activation_code VARCHAR(100),
-    is_active BOOLEAN DEFAULT TRUE,
+    is_active BOOLEAN DEFAULT FALSE, -- 🔒 nowy user nieaktywny
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -120,7 +120,7 @@ CREATE TABLE comments (
     assignment_id INT REFERENCES assignments(id) ON DELETE CASCADE,
     user_id INT REFERENCES users(id) ON DELETE CASCADE,
     content TEXT NOT NULL,
-    video_timestamp INT, -- sekundy wideo
+    video_timestamp INT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

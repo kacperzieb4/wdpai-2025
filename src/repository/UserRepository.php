@@ -88,8 +88,10 @@ class UserRepository extends Repository
                 u.id,
                 u.firstname,
                 u.lastname,
+                r.name AS role,
                 c.name AS company
             FROM users u
+            JOIN roles r ON u.role_id = r.id
             LEFT JOIN companies c ON u.company_id = c.id
             ORDER BY u.lastname
         ");
@@ -97,5 +99,6 @@ class UserRepository extends Repository
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
 
 }

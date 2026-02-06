@@ -48,10 +48,17 @@
                     Select role
                 </option>
                 <?php foreach ($roles as $role): ?>
+                    <?php if (
+                        $_SESSION['user_role'] === 'MODERATOR'
+                        && $role['name'] === 'ADMIN'
+                    ) continue; ?>
+
                     <option value="<?= $role['id'] ?>">
                         <?= htmlspecialchars($role['name']) ?>
                     </option>
+
                 <?php endforeach; ?>
+
             </select>
 
             <select name="company_id">
@@ -71,10 +78,32 @@
         </form>
     </div>
 
-    <!-- SUCCESS MESSAGE -->
-    <?php if (!empty($successMessage)): ?>
-        <div class="success-box">
-            <?= htmlspecialchars($successMessage) ?>
+   <?php if (!empty($activationCode) || !empty($errorMessage)): ?>
+        <div class="card" style="margin-top: 20px;">
+
+            <?php if (!empty($activationCode)): ?>
+                <h3>User created</h3>
+
+                <p>
+                    User <strong><?= htmlspecialchars($createdEmail) ?></strong>
+                    has been created successfully.
+                </p>
+
+                <p><strong>Activation code:</strong></p>
+
+                <div class="activation-code">
+                    <?= htmlspecialchars($activationCode) ?>
+                </div>
+            <?php endif; ?>
+
+            <?php if (!empty($errorMessage)): ?>
+                <h3>Error</h3>
+
+                <p class="error-message">
+                    <?= htmlspecialchars($errorMessage) ?>
+                </p>
+            <?php endif; ?>
+
         </div>
     <?php endif; ?>
 

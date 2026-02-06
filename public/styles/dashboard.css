@@ -98,3 +98,27 @@ h2 {
     color: #000;
     font-weight: 600;
 }
+
+.watch-btn.disabled {
+    background: #d0d0d0;
+    color: #888;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.role-badge {
+    margin-left: 8px;
+    padding: 3px 8px;
+    font-size: 12px;
+    border-radius: 12px;
+    font-weight: 600;
+    color: #000;
+}
+
+.role-badge.admin {
+    background: #ffb3b3;
+}
+
+.role-badge.user {
+    background: #b3d9ff;
+}
