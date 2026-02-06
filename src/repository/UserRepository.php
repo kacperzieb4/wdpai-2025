@@ -26,11 +26,18 @@ class UserRepository extends Repository
         return $stmt->fetchColumn();
     }
 
-    public function createInactiveUser($email, $firstname, $lastname, $roleId, $code)
+    public function createInactiveUser(
+        string $email,
+        string $firstname,
+        string $lastname,
+        int $roleId,
+        int $companyId,
+        string $code
+    )
     {
         $stmt = $this->database->connect()->prepare("
-            INSERT INTO users (email, firstname, lastname, role_id, activation_code, is_active)
-            VALUES (:email, :firstname, :lastname, :role, :code, false)
+            INSERT INTO users (email, firstname, lastname, role_id, company_id, activation_code, is_active)
+            VALUES (:email, :firstname, :lastname, :role, :company, :code, false)
         ");
 
         $stmt->execute([

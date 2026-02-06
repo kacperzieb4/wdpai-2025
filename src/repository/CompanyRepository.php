@@ -72,5 +72,15 @@ class CompanyRepository extends Repository
         }
     }
 
+    public function getFinchStudioId(): int
+    {
+        $stmt = $this->database->connect()->prepare("
+            SELECT id FROM companies WHERE is_protected = true LIMIT 1
+        ");
+        $stmt->execute();
+        return (int)$stmt->fetchColumn();
+    }
+
+
 
 }

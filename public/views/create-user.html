@@ -2,8 +2,10 @@
 <html lang="pl">
 <head>
     <meta charset="UTF-8">
-    <title>Create User</title>
+    <title>Create user</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="/public/styles/dashboard.css">
     <link rel="stylesheet" href="/public/styles/create-user.css">
 </head>
 <body>
@@ -11,60 +13,64 @@
 <header class="top-bar">
     <div class="logo">FINCH</div>
     <nav>
-        <a href="/dashboard">Dashboard</a>
+        <a href="/manage-users">Users</a>
         <a href="/logout" class="logout">Log out</a>
     </nav>
 </header>
 
 <main class="content">
 
-    <h1 class="page-title">Create User</h1>
+    <h1 class="page-title">Create user</h1>
 
-    <!-- FORM CARD -->
     <div class="card">
-        <form method="POST" action="/create-user">
+        <form method="POST">
 
+            <!-- EMAIL -->
             <input
                 type="email"
                 name="email"
-                placeholder="Email address"
+                placeholder="Email"
                 required
             >
 
+            <!-- FIRSTNAME -->
             <input
                 type="text"
                 name="firstname"
                 placeholder="First name"
+                required
             >
 
+            <!-- LASTNAME -->
             <input
                 type="text"
                 name="lastname"
                 placeholder="Last name"
+                required
             >
 
-            <select name="role_id" required>
-                <option value="" disabled selected>
-                    Select role
-                </option>
-                <?php foreach ($roles as $role): ?>
-                    <?php if (
-                        $_SESSION['user_role'] === 'MODERATOR'
-                        && $role['name'] === 'ADMIN'
-                    ) continue; ?>
+            <!-- ROLE -->
+            <select name="role_id" id="roleSelect" required>
+                <option value="">Role</option>
 
+                <?php foreach ($roles as $role): ?>
+                    <?php
+                        // moderator nie może tworzyć admina
+                        if (
+                            $_SESSION['user_role'] === 'MODERATOR'
+                            && $role['name'] === 'ADMIN'
+                        ) continue;
+                    ?>
                     <option value="<?= $role['id'] ?>">
                         <?= htmlspecialchars($role['name']) ?>
                     </option>
-
                 <?php endforeach; ?>
-
             </select>
 
-            <select name="company_id">
-                <option value="">
-                    Company (optional)
-                </option>
+            <!-- COMPANY -->
+            <select name="company_id" id="companySelect" required>
+                <option value="">Company</option>
+
                 <?php foreach ($companies as $company): ?>
                     <option value="<?= $company['id'] ?>">
                         <?= htmlspecialchars($company['name']) ?>
@@ -76,17 +82,15 @@
                 Create user
             </button>
         </form>
-    </div>
 
-   <?php if (!empty($activationCode) || !empty($errorMessage)): ?>
-        <div class="card" style="margin-top: 20px;">
-
-            <?php if (!empty($activationCode)): ?>
+        <!-- SUCCESS -->
+        <?php if (!empty($activationCode)): ?>
+            <div class="success-box">
                 <h3>User created</h3>
 
                 <p>
                     User <strong><?= htmlspecialchars($createdEmail) ?></strong>
-                    has been created successfully.
+                    has been created.
                 </p>
 
                 <p><strong>Activation code:</strong></p>
@@ -94,20 +98,39 @@
                 <div class="activation-code">
                     <?= htmlspecialchars($activationCode) ?>
                 </div>
-            <?php endif; ?>
+            </div>
+        <?php endif; ?>
 
-            <?php if (!empty($errorMessage)): ?>
-                <h3>Error</h3>
-
-                <p class="error-message">
-                    <?= htmlspecialchars($errorMessage) ?>
-                </p>
-            <?php endif; ?>
-
-        </div>
-    <?php endif; ?>
+        <!-- ERROR -->
+        <?php if (!empty($errorMessage)): ?>
+            <div class="error-box">
+                <?= htmlspecialchars($errorMessage) ?>
+            </div>
+        <?php endif; ?>
+    </div>
 
 </main>
+
+<script>
+    const roleSelect = document.getElementById('roleSelect');
+    const companySelect = document.getElementById('companySelect');
+    const FINCH_ID = <?= (int)$finchStudioId ?>;
+
+    function updateCompanySelect() {
+        const roleText =
+            roleSelect.options[roleSelect.selectedIndex]?.text || '';
+
+        if (roleText === 'MODERATOR') {
+            companySelect.value = FINCH_ID;
+            companySelect.disabled = true;
+        } else {
+            companySelect.disabled = false;
+        }
+    }
+
+    roleSelect.addEventListener('change', updateCompanySelect);
+    window.addEventListener('load', updateCompanySelect);
+</script>
 
 </body>
 </html>

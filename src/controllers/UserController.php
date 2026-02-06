@@ -41,6 +41,19 @@ class UserController extends AppController
                 try {
                     $activationCode = bin2hex(random_bytes(16));
                     $createdEmail = $_POST['email'];
+                    $roleId = (int)$_POST['role_id'];
+                    $roleName = $this->roleRepository->getNameById($roleId);
+
+                    if ($roleName === 'MODERATOR') {
+                        $companyId = $this->companyRepository->getFinchStudioId();
+                    }
+                    else {
+                        if (empty($_POST['company_id'])) {
+                            $errorMessage = 'Company is required.';
+                        } else {
+                            $companyId = (int)$_POST['company_id'];
+                        }
+                    }
 
                     $this->userRepository->createInactiveUser(
                         $createdEmail,
@@ -49,14 +62,6 @@ class UserController extends AppController
                         (int)$_POST['role_id'],
                         $activationCode
                     );
-
-                    if (!empty($_POST['company_id'])) {
-                        $user = $this->userRepository->getUserByEmail($createdEmail);
-                        $this->userRepository->assignUserToCompany(
-                            (int)$user['id'],
-                            (int)$_POST['company_id']
-                        );
-                    }
 
                 } catch (PDOException $e) {
 
@@ -74,10 +79,12 @@ class UserController extends AppController
 
         $roles = $this->roleRepository->getAll();
         $companies = $this->companyRepository->getAll();
+        $finchStudioId = $this->companyRepository->getFinchStudioId();
 
         $this->render('create-user', [
             'roles' => $roles,
             'companies' => $companies,
+            'finchStudioId' => $finchStudioId,
             'activationCode' => $activationCode,
             'createdEmail' => $createdEmail,
             'errorMessage' => $errorMessage
