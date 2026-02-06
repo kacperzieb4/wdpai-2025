@@ -216,6 +216,16 @@ class Routing {
                 $ctrl->index();
                 break;
 
+            case 'edit-user':
+                $ctrl = new UserController();
+                $ctrl->edit($segments[1] ?? null);
+                break;
+
+            case 'delete-user':
+                $ctrl = new UserController();
+                $ctrl->delete($segments[1] ?? null);
+                break;
+
             default:
                 include 'public/views/404.html';
                 break;

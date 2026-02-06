@@ -100,5 +100,46 @@ class UserRepository extends Repository
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    public function getUserById(int $id)
+    {
+        $stmt = $this->database->connect()->prepare("
+            SELECT u.*, r.name AS role
+            FROM users u
+            JOIN roles r ON u.role_id = r.id
+            WHERE u.id = :id
+        ");
+        $stmt->execute([':id' => $id]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function updateUser(int $id, string $firstname, string $lastname, int $roleId, ?int $companyId)
+    {
+        $stmt = $this->database->connect()->prepare("
+            UPDATE users
+            SET firstname = :firstname,
+                lastname = :lastname,
+                role_id = :role,
+                company_id = :company
+            WHERE id = :id
+        ");
+
+        $stmt->execute([
+            ':firstname' => $firstname,
+            ':lastname' => $lastname,
+            ':role' => $roleId,
+            ':company' => $companyId,
+            ':id' => $id
+        ]);
+    }
+
+    public function deleteUser(int $id)
+    {
+        $stmt = $this->database->connect()->prepare("
+            DELETE FROM users WHERE id = :id
+        ");
+        $stmt->execute([':id' => $id]);
+    }
+
+
 
 }

@@ -122,3 +122,35 @@ h2 {
 .role-badge.user {
     background: #b3d9ff;
 }
+
+.role-badge {
+    margin-left: 8px;
+    padding: 4px 10px;
+    font-size: 12px;
+    border-radius: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+/* ADMIN – czerwony */
+.role-badge.admin {
+    background: #ffb3b3;
+    color: #000;
+}
+
+/* MODERATOR – niebieski */
+.role-badge.moderator {
+    background: #b3d9ff;
+    color: #000;
+}
+
+/* USER – jasnoszary (jaśniejszy niż blok) */
+.role-badge.user {
+    background: #eeeeee;
+    color: #555;
+}
+
+.file-actions {
+    display: flex;
+    gap: 10px;
+}

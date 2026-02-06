@@ -33,32 +33,68 @@
 
     <div class="files-list">
         <?php foreach ($users as $u): ?>
+
+            <?php
+                $currentUserId = $_SESSION['user_id'];
+                $currentRole   = $_SESSION['user_role'];
+                $targetRole    = $u['role'];
+            ?>
+
             <div class="file-tile">
                 <div class="file-info">
                     <span>👤</span>
+
                     <span class="file-name">
                         <?= htmlspecialchars($u['firstname']) ?>
                         <?= htmlspecialchars($u['lastname']) ?>
 
-                        <span class="role-badge <?= strtolower($u['role']) ?>">
-                            <?= htmlspecialchars($u['role']) ?>
-                        </span>
+                        <?php if (!empty($u['role'])): ?>
+                            <span class="role-badge <?= strtolower($u['role']) ?>">
+                                <?= htmlspecialchars($u['role']) ?>
+                            </span>
+                        <?php endif; ?>
                     </span>
+
                     <small>
                         <?= $u['company'] ?? '— no company —' ?>
                     </small>
                 </div>
 
-                <div>
-                    <a href="/edit-user/<?= $u['id'] ?>" class="watch-btn">Edit</a>
-                    <?php if ($u['id'] != $_SESSION['user_id']): ?>
-                        <a href="/delete-user/<?= $u['id'] ?>" class="watch-btn">Delete</a>
-                    <?php else: ?>
-                        <span class="watch-btn disabled">Delete</span>
+               <div class="file-actions">
+                    <?php
+                        $currentUserId = $_SESSION['user_id'];
+                        $currentRole   = $_SESSION['user_role'];
+                        $targetRole    = $u['role'];
+                        $isSelf        = $u['id'] == $currentUserId;
+                    ?>
+
+                    <?php if (
+                        $currentRole === 'ADMIN'
+                        || ($currentRole === 'MODERATOR' && $targetRole === 'USER')
+                    ): ?>
+                        <?php if (!$isSelf): ?>
+                            <a href="/edit-user/<?= $u['id'] ?>" class="watch-btn">
+                                Edit
+                            </a>
+                        <?php endif; ?>
+                    <?php endif; ?>
+
+                    <?php if (
+                        !$isSelf
+                        && (
+                            $currentRole === 'ADMIN'
+                            || ($currentRole === 'MODERATOR' && $targetRole === 'USER')
+                        )
+                    ): ?>
+                        <a href="/delete-user/<?= $u['id'] ?>" class="watch-btn">
+                            Delete
+                        </a>
                     <?php endif; ?>
 
                 </div>
+
             </div>
+
         <?php endforeach; ?>
     </div>
 

@@ -102,17 +102,27 @@ class UserController extends AppController
             return;
         }
 
-        if (!$id) {
+        $user = $this->userRepository->getUserById((int)$id);
+        if (!$user) {
             $this->render('404');
             return;
         }
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+            if (
+                $_SESSION['user_role'] === 'MODERATOR'
+                && $this->roleRepository->getNameById((int)$_POST['role_id']) === 'ADMIN'
+            ) {
+                $this->render('403');
+                return;
+            }
+
             $this->userRepository->updateUser(
-                $id,
+                (int)$id,
                 $_POST['firstname'],
                 $_POST['lastname'],
-                $_POST['role_id'],
+                (int)$_POST['role_id'],
                 $_POST['company_id'] ?: null
             );
 
@@ -120,7 +130,6 @@ class UserController extends AppController
             exit;
         }
 
-        $user = $this->userRepository->getUserById($id);
         $roles = $this->roleRepository->getAll();
         $companies = $this->companyRepository->getAll();
 
@@ -131,21 +140,43 @@ class UserController extends AppController
         ]);
     }
 
+
     public function delete($id)
     {
-        if (!isset($_SESSION['user_role']) || $_SESSION['user_role'] !== 'ADMIN') {
+        if (!isset($_SESSION['user_id'], $_SESSION['user_role'])) {
             $this->render('403');
             return;
         }
 
-        if ((int)$id === (int)$_SESSION['user_id']) {
+        $id = (int)$id;
+
+        if ($id === (int)$_SESSION['user_id']) {
+            $this->render('403');
+            return;
+        }
+
+        $userToDelete = $this->userRepository->getUserById($id);
+        if (!$userToDelete) {
+            $this->render('404');
+            return;
+        }
+
+        $currentRole = $_SESSION['user_role'];
+        $targetRole = $userToDelete['role'];
+
+        if ($currentRole === 'ADMIN') {
+            $this->userRepository->deleteUser($id);
             header('Location: /manage-users');
             exit;
         }
 
-        $this->userRepository->deleteUser($id);
-        header('Location: /manage-users');
-        exit;
+        if ($currentRole === 'MODERATOR' && $targetRole === 'USER') {
+            $this->userRepository->deleteUser($id);
+            header('Location: /manage-users');
+            exit;
+        }
+
+        $this->render('403');
     }
 
 }
