@@ -1,15 +1,12 @@
--- =========================
--- CLEAN START
--- =========================
 DROP TABLE IF EXISTS comments CASCADE;
+DROP TABLE IF EXISTS assignment_users CASCADE;
 DROP TABLE IF EXISTS assignments CASCADE;
+DROP TABLE IF EXISTS user_status CASCADE;
 DROP TABLE IF EXISTS users CASCADE;
 DROP TABLE IF EXISTS companies CASCADE;
 DROP TABLE IF EXISTS roles CASCADE;
 
--- =========================
 -- ROLES
--- =========================
 CREATE TABLE roles (
     id SERIAL PRIMARY KEY,
     name VARCHAR(50) UNIQUE NOT NULL
@@ -20,9 +17,7 @@ INSERT INTO roles (name) VALUES
 ('MODERATOR'),
 ('USER');
 
--- =========================
 -- COMPANIES
--- =========================
 CREATE TABLE companies (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) UNIQUE NOT NULL,
@@ -34,9 +29,7 @@ INSERT INTO companies (name, is_protected) VALUES
 ('MediaCorp', FALSE),
 ('VisionX', FALSE);
 
--- =========================
 -- USERS
--- =========================
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
     email VARCHAR(255) UNIQUE NOT NULL,
@@ -50,7 +43,13 @@ CREATE TABLE users (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- hasło: admin123 / moderator123 / user123
+CREATE TABLE user_status (
+    user_id INT PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+    last_login TIMESTAMP,
+    failed_login_attempts INT DEFAULT 0,
+    locked_until TIMESTAMP
+);
+
 INSERT INTO users (email, password, firstname, lastname, role_id, company_id, is_active)
 VALUES
 (
@@ -81,9 +80,7 @@ VALUES
     TRUE
 );
 
--- =========================
 -- ASSIGNMENTS
--- =========================
 CREATE TABLE assignments (
     id SERIAL PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
@@ -115,9 +112,7 @@ VALUES
     (SELECT id FROM companies WHERE name = 'VisionX')
 );
 
--- =========================
 -- COMMENTS
--- =========================
 CREATE TABLE comments (
     id SERIAL PRIMARY KEY,
     assignment_id INT NOT NULL REFERENCES assignments(id) ON DELETE CASCADE,
@@ -142,9 +137,13 @@ VALUES
     NULL
 );
 
--- =========================
+CREATE TABLE assignment_users (
+    assignment_id INT REFERENCES assignments(id) ON DELETE CASCADE,
+    user_id INT REFERENCES users(id) ON DELETE CASCADE,
+    PRIMARY KEY (assignment_id, user_id)
+);
+
 -- VIEWS
--- =========================
 CREATE VIEW assignment_comment_count AS
 SELECT 
     a.id,
@@ -152,7 +151,7 @@ SELECT
     COUNT(c.id) AS comment_count
 FROM assignments a
 LEFT JOIN comments c ON a.id = c.assignment_id
-GROUP BY a.id;
+GROUP BY a.id, a.title;
 
 CREATE VIEW user_assignment_count AS
 SELECT
@@ -163,9 +162,7 @@ FROM users u
 LEFT JOIN assignments a ON a.company_id = u.company_id
 GROUP BY u.id, u.email;
 
--- =========================
 -- FUNCTION
--- =========================
 CREATE OR REPLACE FUNCTION get_assignment_comments(a_id INT)
 RETURNS TABLE(
     comment_id INT,
@@ -190,9 +187,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- =========================
 -- TRIGGER
--- =========================
 CREATE OR REPLACE FUNCTION update_assignment_timestamp()
 RETURNS TRIGGER AS $$
 BEGIN
@@ -204,6 +199,6 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER comment_update_trigger
-AFTER INSERT ON comments
+AFTER INSERT OR UPDATE ON comments
 FOR EACH ROW
 EXECUTE FUNCTION update_assignment_timestamp();
