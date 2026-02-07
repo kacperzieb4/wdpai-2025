@@ -16,8 +16,11 @@ class CompanyController extends AppController
     private function checkAccess()
     {
         if (!isset($_SESSION['user_role']) || $_SESSION['user_role'] === 'USER') {
-            $this->render('403');
-            exit;
+            $this->error(
+                403,
+                'Access denied',
+                'You are not allowed to access this resource.'
+            );
         }
     }
 
@@ -60,8 +63,11 @@ class CompanyController extends AppController
 
         $company = $this->companyRepository->getById((int)$id);
         if (!$company) {
-            $this->render('404');
-            return;
+            $this->error(
+                404,
+                'Company not found',
+                'The selected company does not exist.'
+            );
         }
 
         $errorMessage = null;
@@ -92,8 +98,11 @@ class CompanyController extends AppController
 
         $company = $this->companyRepository->getById((int)$id);
         if (!$company) {
-            $this->render('404');
-            return;
+            $this->error(
+                404,
+                'Company not found',
+                'The selected company does not exist.'
+            );
         }
 
         $this->ensureNotProtected($company);
@@ -110,8 +119,11 @@ class CompanyController extends AppController
 
         $company = $this->companyRepository->getById((int)$id);
         if (!$company) {
-            $this->render('404');
-            return;
+            $this->error(
+                404,
+                'Company not found',
+                'The selected company does not exist.'
+            );
         }
 
         $this->ensureNotProtected($company);
@@ -125,8 +137,11 @@ class CompanyController extends AppController
     private function ensureNotProtected(array $company)
     {
         if (!empty($company['is_protected'])) {
-            $this->render('403');
-            exit;
+            $this->error(
+                403,
+                'Access denied',
+                'You are not allowed to manage companies.'
+            );
         }
     }
 

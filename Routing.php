@@ -133,8 +133,22 @@ class Routing
                 break;
 
             default:
-                require 'public/views/404.php';
-                break;
+                self::error(
+                    404,
+                    'Page not found',
+                    'The page you are looking for does not exist.'
+                );
         }
     }
+    private static function error(
+        int $code,
+        string $title,
+        string $message
+    ) {
+        http_response_code($code);
+
+        require 'public/views/error.php';
+        exit;
+    }
+
 }

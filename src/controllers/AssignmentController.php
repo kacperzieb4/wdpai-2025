@@ -1,10 +1,12 @@
 <?php
 
+require_once 'AppController.php';
+
 require_once 'src/repository/AssignmentRepository.php';
 require_once 'src/repository/UserRepository.php';
 require_once 'src/repository/CompanyRepository.php';
 
-class AssignmentController
+class AssignmentController extends AppController
 {
     private $assignmentRepository;
     private $userRepository;
@@ -20,8 +22,11 @@ class AssignmentController
     public function index()
     {
         if ($_SESSION['user_role'] === 'USER') {
-            header("Location: /dashboard");
-            exit();
+            $this->error(
+                403,
+                'Access denied',
+                'Only moderators and admins can manage assignments.'
+            );
         }
 
         $assignments = $this->assignmentRepository->getAllWithCompany();
@@ -38,8 +43,11 @@ class AssignmentController
     public function create()
     {
         if ($_SESSION['user_role'] === 'USER') {
-            $this->render('403');
-            return;
+            $this->error(
+                403,
+                'Access denied',
+                'You are not allowed to access this resource.'
+            );
         }
 
         require_once __DIR__ . '/../repository/AssignmentRepository.php';
@@ -96,17 +104,14 @@ class AssignmentController
         }
     }
 
-    private function render(string $view, array $params = [])
-    {
-        extract($params);
-        include "public/views/$view.php";
-    }
-
     public function edit($id)
     {
         if ($_SESSION['user_role'] === 'USER') {
-            $this->render('403');
-            return;
+            $this->error(
+                403,
+                'Access denied',
+                'You are not allowed to access this resource.'
+            );
         }
 
         require_once __DIR__ . '/../repository/AssignmentRepository.php';
@@ -117,8 +122,11 @@ class AssignmentController
 
         $assignment = $assignmentRepository->getAssignment((int)$id);
         if (!$assignment) {
-            $this->render('404');
-            return;
+            $this->error(
+                404,
+                'Assignment not found',
+                'The requested assignment does not exist.'
+            );
         }
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -171,8 +179,11 @@ class AssignmentController
     public function delete($id)
     {
         if ($_SESSION['user_role'] === 'USER') {
-            $this->render('403');
-            return;
+            $this->error(
+                403,
+                'Access denied',
+                'You are not allowed to access this resource.'
+            );
         }
 
         require_once __DIR__ . '/../repository/AssignmentRepository.php';
@@ -181,8 +192,11 @@ class AssignmentController
 
         $assignment = $assignmentRepository->getAssignment((int)$id);
         if (!$assignment) {
-            $this->render('404');
-            return;
+            $this->error(
+                404,
+                'Assignment not found',
+                'The requested assignment does not exist.'
+            );
         }
 
         $filePath = __DIR__ . '/../../' . $assignment['video_path'];
@@ -214,8 +228,11 @@ class AssignmentController
             in_array($_SESSION['user_role'], ['ADMIN', 'MODERATOR']);
 
         if (!$canDelete) {
-            $this->render('403');
-            return;
+            $this->error(
+                403,
+                'Access denied',
+                'You are not allowed to access this resource.'
+            );
         }
 
         $repo->delete((int)$commentId);
@@ -241,8 +258,11 @@ class AssignmentController
             in_array($_SESSION['user_role'], ['ADMIN', 'MODERATOR']);
 
         if (!$canEdit) {
-            $this->render('403');
-            return;
+            $this->error(
+                403,
+                'Access denied',
+                'You are not allowed to access this resource.'
+            );
         }
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -260,8 +280,5 @@ class AssignmentController
             'comment' => $comment
         ]);
     }
-
-
-
 
 }

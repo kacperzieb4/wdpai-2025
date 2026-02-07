@@ -102,8 +102,11 @@ class UserController extends AppController
     public function index()
     {
         if (!isset($_SESSION['user_role']) || $_SESSION['user_role'] === 'USER') {
-            $this->render('403');
-            return;
+            $this->error(
+                403,
+                'Access denied',
+                'Only moderators and admins can manage users.'
+            );
         }
 
         $users = $this->userRepository->getAllUsersWithCompany();
@@ -113,6 +116,14 @@ class UserController extends AppController
     public function edit(int $id)
     {
         $user = $this->userRepository->getById($id);
+        if (!$user) {
+            $this->error(
+                404,
+                'User not found',
+                'The requested user does not exist.'
+            );
+        }
+
         $roles = $this->roleRepository->getAll();
         $companies = $this->companyRepository->getAll();
 
@@ -171,20 +182,30 @@ class UserController extends AppController
     public function delete($id)
     {
         if (!isset($_SESSION['user_id'], $_SESSION['user_role'])) {
-            $this->render('403');
-            return;
+            $this->error(
+                403,
+                'Access denied',
+                'You are not allowed to access this resource.'
+            );
         }
 
         $id = (int)$id;
 
         if ($id === (int)$_SESSION['user_id']) {
-            $this->render('403');
-            return;
+            $this->error(
+                403,
+                'Access denied',
+                'You cannot delete your own account.'
+            );
         }
 
         $userToDelete = $this->userRepository->getById($id);
         if (!$userToDelete) {
-            $this->render('404');
+            $this->error(
+                404,
+                'User not found',
+                'The requested user does not exist.'
+            );
             return;
         }
 
@@ -197,13 +218,16 @@ class UserController extends AppController
             exit;
         }
 
+        $targetRole = $this->roleRepository->getById($userToDelete['role_id'])['name'];
         if ($currentRole === 'MODERATOR' && $targetRole === 'USER') {
             $this->userRepository->deleteUser($id);
-            header('Location: /manage-users');
-            exit;
         }
 
-        $this->render('403');
+        $this->error(
+            403,
+            'Access denied',
+            'You cannot delete this user.'
+        );
     }
 
 

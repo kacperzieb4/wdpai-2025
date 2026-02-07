@@ -16,8 +16,11 @@ class RoleController extends AppController
     public function index()
     {
         if (!isset($_SESSION['user_role']) || $_SESSION['user_role'] === 'USER') {
-            $this->render('403');
-            return;
+            $this->error(
+                403,
+                'Access denied',
+                'You are not allowed to access this resource.'
+            );
         }
 
         $roles = $this->roleRepository->getAll();

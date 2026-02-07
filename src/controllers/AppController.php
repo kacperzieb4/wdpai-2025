@@ -45,10 +45,23 @@ class AppController {
     protected function requireRole(string $role): void
     {
         if (empty($_SESSION['user_role']) || $_SESSION['user_role'] !== $role) {
-            http_response_code(403);
-            include 'public/views/403.php';
-            exit();
+            $this->error(
+                403,
+                'Access denied',
+                'You do not have permission to access this section.'
+            );
         }
+    }
+
+    protected function error(int $code, string $title,string $message): void {
+        http_response_code($code);
+
+        $code = $code;
+        $title = $title;
+        $message = $message;
+
+        require 'public/views/error.php';
+        exit;
     }
 
 }

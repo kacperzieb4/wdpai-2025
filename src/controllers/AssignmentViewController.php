@@ -1,9 +1,11 @@
 <?php
 
+require_once 'AppController.php';
+
 require_once __DIR__ . '/../repository/AssignmentRepository.php';
 require_once __DIR__ . '/../repository/CommentRepository.php';
 
-class AssignmentViewController
+class AssignmentViewController extends AppController
 {
     private AssignmentRepository $assignmentRepository;
     private CommentRepository $commentRepository;
@@ -29,8 +31,11 @@ class AssignmentViewController
 
         $assignment = $this->assignmentRepository->getAssignment((int)$id);
         if (!$assignment) {
-            require 'public/views/404.php';
-            return;
+            $this->error(
+                404,
+                'Assignment not found',
+                'This assignment does not exist or was removed.'
+            );
         }
 
         $comments = $this->commentRepository->getByAssignmentId((int)$id);
@@ -78,8 +83,11 @@ class AssignmentViewController
             || in_array($_SESSION['user_role'], ['ADMIN', 'MODERATOR']);
 
         if (!$canDelete) {
-            require 'public/views/403.php';
-            return;
+            $this->error(
+                403,
+                'Access denied',
+                'You are not allowed to delete this comment.'
+            );
         }
 
         $this->commentRepository->delete((int)$commentId);
@@ -101,8 +109,11 @@ class AssignmentViewController
             || in_array($_SESSION['user_role'], ['ADMIN', 'MODERATOR']);
 
         if (!$canEdit) {
-            require 'public/views/403.php';
-            return;
+            $this->error(
+                403,
+                'Access denied',
+                'You are not allowed to edit this comment.'
+            );
         }
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {

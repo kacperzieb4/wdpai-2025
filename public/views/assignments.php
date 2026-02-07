@@ -32,35 +32,40 @@
     <div class="list">
     <?php foreach ($assignments as $a): ?>
 
-        <div class="tile">
-            <div class="file-info">
-                <span>🎬</span>
+        <div class="list-item">
 
-                <span class="file-name">
+    <div class="list-item__main">
+            <span class="list-item__icon">🎬</span>
+
+            <div class="list-item__text">
+                <span class="list-item__title">
                     <?= htmlspecialchars($a['title']) ?>
-                    <span class="company-inline">
-                        <?= htmlspecialchars($a['company'] ?? '— no company —') ?>
-                    </span>
+                </span>
+
+                <span class="list-item__meta">
+                    <?= htmlspecialchars($a['company'] ?? '— no company —') ?>
                 </span>
             </div>
+        </div>
 
-            <div class="file-actions">
-                <a href="/assignment/<?= $a['id'] ?>" class="action-link">
-                    View
+        <div class="list-item__actions">
+            <a href="/assignment/<?= $a['id'] ?>" class="action-link">
+                View
+            </a>
+
+            <?php if ($_SESSION['user_role'] !== 'USER'): ?>
+                <a href="/edit-assignment/<?= $a['id'] ?>" class="action-link">
+                    Edit
                 </a>
 
-                <?php if ($_SESSION['user_role'] !== 'USER'): ?>
-                    <a href="/edit-assignment/<?= $a['id'] ?>" class="action-link">
-                        Edit
-                    </a>
-
-                    <a href="/delete-assignment/<?= $a['id'] ?>"
-                       class="action-link action-link--danger">
-                        Delete
-                    </a>
-                <?php endif; ?>
-            </div>
+                <a href="/delete-assignment/<?= $a['id'] ?>"
+                class="action-link action-link--danger">
+                    Delete
+                </a>
+            <?php endif; ?>
         </div>
+
+    </div>
 
     <?php endforeach; ?>
 </div>
