@@ -17,6 +17,10 @@ class SecurityController
             session_start();
         }
 
+        if (empty($_SESSION['csrf'])) {
+            $_SESSION['csrf'] = bin2hex(random_bytes(32));
+        }
+
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (!hash_equals($_SESSION['csrf'], $_POST['csrf'] ?? '')) {
                 $this->error(403, 'CSRF detected', 'Invalid request.');
@@ -69,6 +73,9 @@ class SecurityController
     {
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
+        }
+        if (empty($_SESSION['csrf'])) {
+            $_SESSION['csrf'] = bin2hex(random_bytes(32));
         }
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 

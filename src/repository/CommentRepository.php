@@ -4,10 +4,6 @@ require_once 'Repository.php';
 
 class CommentRepository extends Repository
 {
-    /**
-     * Wszystkie komentarze do assignmentu
-     * (potrzebne: user_id + user_name do uprawnień)
-     */
     public function getByAssignmentId(int $assignmentId): array
     {
         $stmt = $this->database->connect()->prepare("
@@ -22,7 +18,7 @@ class CommentRepository extends Repository
             FROM comments c
             JOIN users u ON c.user_id = u.id
             WHERE c.assignment_id = :id
-            ORDER BY c.created_at ASC
+            ORDER BY c.created_at DESC
         ");
 
         $stmt->execute([':id' => $assignmentId]);
@@ -30,9 +26,6 @@ class CommentRepository extends Repository
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    /**
-     * Pojedynczy komentarz (edit / delete)
-     */
     public function getById(int $id): ?array
     {
         $stmt = $this->database->connect()->prepare("
@@ -43,9 +36,6 @@ class CommentRepository extends Repository
         return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
     }
 
-    /**
-     * Dodanie komentarza
-     */
     public function addComment(
         int $assignmentId,
         int $userId,
@@ -65,9 +55,6 @@ class CommentRepository extends Repository
         ]);
     }
 
-    /**
-     * Edycja komentarza
-     */
     public function update(int $id, string $content): void
     {
         $stmt = $this->database->connect()->prepare("
@@ -82,9 +69,6 @@ class CommentRepository extends Repository
         ]);
     }
 
-    /**
-     * Usunięcie komentarza
-     */
     public function delete(int $id): void
     {
         $stmt = $this->database->connect()->prepare("
