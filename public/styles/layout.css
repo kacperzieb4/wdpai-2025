@@ -27,3 +27,18 @@
     max-width: 900px;
     margin: 0 auto;
 }
+
+@media (max-width: 768px) {
+
+    body {
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+
+    .header {
+        left: 0;
+        right: 0;
+        width: 100%;
+    }
+
+}

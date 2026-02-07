@@ -45,6 +45,10 @@
     align-items: center;
 }
 
+.main {
+        padding-bottom: 40px;
+    }
+
 form {
     display: flex;
     flex-direction: column;
@@ -315,3 +319,91 @@ button:active,
     opacity: 0.7;
     filter: none;
 }
+
+@media (max-width: 768px) {
+
+    .admin-panel {
+        flex-direction: column;
+    }
+
+    .admin-tile {
+        width: 100%;
+    }
+
+    .tile {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .file-info {
+        width: 100%;
+    }
+
+    .file-actions {
+        width: 100%;
+        display: flex;
+        justify-content: flex-end;
+        gap: 16px;
+        flex-wrap: nowrap;
+    }
+
+    .file-actions a {
+        white-space: nowrap;
+    }
+
+    .list-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .list-item__main {
+        width: 100%;
+    }
+
+    .list-item__actions .action-link {
+        white-space: nowrap;
+        font-size: 14px;
+    }
+
+    .list-item__actions {
+        width: 100%;
+        display: flex;
+        justify-content: flex-end;
+        gap: 14px;
+        flex-wrap: nowrap;
+    }
+
+    .comment {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .comment-header {
+        width: 100%;
+    }
+
+    .comment > p {
+        width: 100%;
+        word-break: break-word;
+    }
+
+    .comment .action-links {
+        position: static;
+        width: 100%;
+        display: flex;
+        justify-content: flex-end;
+        gap: 16px;
+        margin-top: 6px;
+    }
+
+    .comment .action-link {
+        white-space: nowrap;
+        font-size: 14px;
+    }
+
+}
+
