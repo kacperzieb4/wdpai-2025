@@ -79,8 +79,6 @@ Przykładowe zmienne środowiskowe znajdują się w pliku:
 
 Zawierają konfigurację połączenia z bazą danych oraz ustawienia aplikacji.
 
----
-
 ## 6. Scenariusz testowy (krok po kroku)
 
 ### Logowanie i role
