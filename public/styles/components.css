@@ -276,6 +276,10 @@ textarea {
     margin-top: 14px;
 }
 
+.card--success, .card--error {
+    margin-bottom: 20px;
+}
+
 a,
 button,
 .btn,

@@ -120,10 +120,6 @@ class Routing
                 (new AssignmentViewController())->deleteComment($segments[1] ?? null);
                 break;
 
-            case 'moderator':
-                (new ModeratorController())->index();
-                break;
-
             case 'moderator-create-company':
                 (new ModeratorController())->createCompany();
                 break;

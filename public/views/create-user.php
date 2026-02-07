@@ -19,7 +19,7 @@
     <h1 class="page-title">Create user</h1>
 
     <?php if (!empty($successCode)): ?>
-        <div class="card">
+        <div class="card card--success">
             <strong>User created successfully.</strong><br><br>
             Activation code:
             <div class="file-name" style="margin-top:8px;">
@@ -29,7 +29,7 @@
     <?php endif; ?>
 
     <?php if (!empty($error)): ?>
-        <div class="card" style="background:#ffdddd;">
+        <div class="card card--error">
             <?= htmlspecialchars($error) ?>
         </div>
     <?php endif; ?>
