@@ -31,7 +31,7 @@ class RegisterController extends AppController {
             return;
         }
 
-        $db = (new Database())->connect();
+        $db = Database::getInstance()->connect();
 
         $stmt = $db->prepare("
             SELECT * FROM users 

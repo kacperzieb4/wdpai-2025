@@ -13,29 +13,40 @@ class SecurityController
 
     public function login()
     {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if (!hash_equals($_SESSION['csrf'], $_POST['csrf'] ?? '')) {
+                $this->error(403, 'CSRF detected', 'Invalid request.');
+            }
 
             $email = $_POST['email'];
             $password = $_POST['password'];
 
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                $this->render('login', [
+                    'messages' => ['Invalid email format.']
+                ]);
+                return;
+            }
+
             $user = $this->userRepository->getUserByEmail($email);
 
-            if (!$user) {
-                $this->render('login', ['messages' => ['User not found']]);
+            if (
+                !$user ||
+                !password_verify($password, $user['password']) ||
+                !$user['is_active']
+            ) {
+                $this->render('login', [
+                    'messages' => [
+                        'Incorrect email or password, or the account is not activated.'
+                    ]
+                ]);
                 return;
             }
 
-            if (!$user['is_active']) {
-                $messages[] = "Account not activated yet.";
-                include 'public/views/login.php';
-                return;
-            }
-
-
-            if (!password_verify($password, $user['password'])) {
-                $this->render('login', ['messages' => ['Wrong password']]);
-                return;
-            }
 
             session_regenerate_id(true);
 
@@ -56,12 +67,26 @@ class SecurityController
 
     public function register()
     {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+            if (!hash_equals($_SESSION['csrf'], $_POST['csrf'] ?? '')) {
+                $this->error(403, 'CSRF detected', 'Invalid request.');
+            } 
 
             $email = $_POST['email'];
             $code = $_POST['code'];
             $pass1 = $_POST['password'];
             $pass2 = $_POST['password2'];
+            
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                $this->render('login', [
+                    'messages' => ['Niepoprawny format email']
+                ]);
+                return;
+            }
 
             if ($pass1 !== $pass2) {
                 $this->render('register', ['messages' => ['Passwords do not match']]);
@@ -81,7 +106,17 @@ class SecurityController
             }
 
             $hashed = password_hash($pass1, PASSWORD_DEFAULT);
-            $this->userRepository->activateUser($email, $hashed);
+            
+            try {
+                $this->userRepository->activateUser($email, $hashed);
+            } catch (Throwable $e) {
+                error_log($e->getMessage());
+                $this->error(
+                    500,
+                    'Internal Server Error',
+                    'Account activation failed. Please try again later.'
+                );
+            }
 
             header("Location: /login");
             exit();

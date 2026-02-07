@@ -243,7 +243,7 @@ class UserController extends AppController
             } elseif (strlen($newPassword) < 6) {
                 $error = 'Password must be at least 6 characters long.';
             } else {
-                $db = (new Database())->connect();
+                $db = Database::getInstance()->connect();
 
                 $stmt = $db->prepare('SELECT password FROM users WHERE id = :id');
                 $stmt->execute(['id' => $_SESSION['user_id']]);

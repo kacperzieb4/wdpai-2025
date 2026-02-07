@@ -2,40 +2,37 @@
 
 require_once "config.php";
 
-//TODO SINGLETON
+class Database
+{
+    private static ?Database $instance = null;
+    private ?PDO $connection = null;
 
+    private function __construct() {}
 
-class Database {
-    private $username;
-    private $password;
-    private $host;
-    private $database;
-
-    public function __construct()
+    public static function getInstance(): Database
     {
-        $this->username = USERNAME;
-        $this->password = PASSWORD;
-        $this->host = HOST;
-        $this->database = DATABASE;
+        if (self::$instance === null) {
+            self::$instance = new Database();
+        }
+        return self::$instance;
     }
 
-    public function connect()
+    public function connect(): PDO
     {
-        try {
-            $conn = new PDO(
-                "pgsql:host=$this->host;port=5432;dbname=$this->database",
-                $this->username,
-                $this->password,
-                ["sslmode"  => "prefer"]
+        if ($this->connection === null) {
+            $this->connection = new PDO(
+                "pgsql:host=" . HOST . ";port=5432;dbname=" . DATABASE,
+                USERNAME,
+                PASSWORD,
+                ["sslmode" => "prefer"]
             );
 
-            // set the PDO error mode to exception
-            $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            return $conn;
+            $this->connection->setAttribute(
+                PDO::ATTR_ERRMODE,
+                PDO::ERRMODE_EXCEPTION
+            );
         }
-        catch(PDOException $e) {
-            die("Connection failed: " . $e->getMessage());
-        }
+
+        return $this->connection;
     }
-    //TO DO WRITE DISCONNECT METHOD
 }

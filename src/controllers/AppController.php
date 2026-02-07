@@ -7,6 +7,9 @@ class AppController {
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
+        if (empty($_SESSION['csrf'])) {
+            $_SESSION['csrf'] = bin2hex(random_bytes(32));
+        }
     }
 
     protected function isGet(): bool
@@ -59,10 +62,6 @@ class AppController {
 
     protected function error(int $code, string $title,string $message): void {
         http_response_code($code);
-
-        $code = $code;
-        $title = $title;
-        $message = $message;
 
         require 'public/views/error.php';
         exit;

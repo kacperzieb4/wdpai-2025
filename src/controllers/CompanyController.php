@@ -28,7 +28,17 @@ class CompanyController extends AppController
     {
         $this->checkAccess();
 
-        $companies = $this->companyRepository->getAll();
+        try {
+            $companies = $this->companyRepository->getAll();
+        } catch (Throwable $e) {
+            error_log($e->getMessage());
+            $this->error(
+                500,
+                'Internal Server Error',
+                'Unable to load companies.'
+            );
+        }
+
         $this->render('manage-companies', ['companies' => $companies]);
     }
 
@@ -47,7 +57,12 @@ class CompanyController extends AppController
                 if ($e->getCode() === '23505') {
                     $errorMessage = 'Company with this name already exists.';
                 } else {
-                    $errorMessage = 'Unexpected error occurred.';
+                    error_log($e->getMessage());
+                    $this->error(
+                        500,
+                        'Internal Server Error',
+                        'Could not create company.'
+                    );
                 }
             }
         }
@@ -81,7 +96,12 @@ class CompanyController extends AppController
                 if ($e->getCode() === '23505') {
                     $errorMessage = 'Company with this name already exists.';
                 } else {
-                    $errorMessage = 'Unexpected error occurred.';
+                    error_log($e->getMessage());
+                    $this->error(
+                        500,
+                        'Internal Server Error',
+                        'Could not update company.'
+                    );
                 }
             }
         }
@@ -107,7 +127,16 @@ class CompanyController extends AppController
 
         $this->ensureNotProtected($company);
 
-        $this->companyRepository->delete((int)$id);
+        try {
+            $this->companyRepository->delete((int)$id);
+        } catch (Throwable $e) {
+            error_log($e->getMessage());
+            $this->error(
+                500,
+                'Internal Server Error',
+                'Could not delete company.'
+            );
+        }
         header('Location: /manage-companies');
         exit;
     }
@@ -128,9 +157,18 @@ class CompanyController extends AppController
 
         $this->ensureNotProtected($company);
 
-        $this->companyRepository->deleteWithUsers((int)$id);
-        header('Location: /manage-companies');
-        exit;
+        try {
+            $this->companyRepository->deleteWithUsers((int)$id);
+            header('Location: /manage-companies');
+            exit;
+        } catch (Throwable $e) {
+            error_log($e->getMessage());
+            $this->error(
+                500,
+                'Internal Server Error',
+                'Could not delete company with users.'
+            );
+        }
     }
 
 

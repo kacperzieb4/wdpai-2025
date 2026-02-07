@@ -50,20 +50,33 @@ class UserRepository extends Repository
         ]);
     }
 
-    public function activateUser($email, $password)
+    public function activateUser(string $email, string $hashedPassword): void
     {
-        $stmt = $this->database->connect()->prepare("
-            UPDATE users
-            SET password = :password,
-                is_active = true,
-                activation_code = NULL
-            WHERE email = :email
-        ");
+        $db = Database::getInstance()->connect();
 
-        $stmt->execute([
-            ':email' => $email,
-            ':password' => $password
-        ]);
+        try {
+            $db->beginTransaction();
+            $db->exec('SET TRANSACTION ISOLATION LEVEL READ COMMITTED');
+
+            $stmt = $db->prepare(
+                "UPDATE users 
+                SET password = :p, is_active = TRUE 
+                WHERE email = :e"
+            );
+            $stmt->execute([
+                ':p' => $hashedPassword,
+                ':e' => $email
+            ]);
+
+            if ($stmt->rowCount() !== 1) {
+                throw new RuntimeException('User not activated');
+            }
+
+            $db->commit();
+        } catch (Throwable $e) {
+            $db->rollBack();
+            throw $e;
+        }
     }
 
     public function getAllUsers()

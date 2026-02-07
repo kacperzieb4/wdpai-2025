@@ -154,6 +154,15 @@ FROM assignments a
 LEFT JOIN comments c ON a.id = c.assignment_id
 GROUP BY a.id;
 
+CREATE VIEW user_assignment_count AS
+SELECT
+    u.id AS user_id,
+    u.email,
+    COUNT(a.id) AS assignments_count
+FROM users u
+LEFT JOIN assignments a ON a.company_id = u.company_id
+GROUP BY u.id, u.email;
+
 -- =========================
 -- FUNCTION
 -- =========================

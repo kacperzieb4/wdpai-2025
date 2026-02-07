@@ -38,6 +38,7 @@
         <?php endif; ?>
 
         <form method="POST" action="/register-submit" class="login-form">
+            <input type="hidden" name="csrf" value="<?= $_SESSION['csrf'] ?>">
 
             <input
                 type="email"

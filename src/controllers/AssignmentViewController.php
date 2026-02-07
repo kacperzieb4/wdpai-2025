@@ -51,6 +51,10 @@ class AssignmentViewController extends AppController
         $content = trim($_POST['content']);
         $timestamp = $_POST['video_timestamp'] !== '' ? (int)$_POST['video_timestamp'] : null;
 
+        if (strlen($content) > 300) {
+            $this->error(400, 'Invalid input', 'Comment too long');
+        }
+
         if ($content === '') {
             header('Location: /assignment/' . $assignmentId);
             exit;
@@ -115,6 +119,10 @@ class AssignmentViewController extends AppController
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $content = trim($_POST['content']);
+
+            if (strlen($content) > 300) {
+                $this->error(400, 'Invalid input', 'Comment too long');
+            }
 
             if ($content !== '') {
                 $this->commentRepository->update((int)$commentId, $content);
