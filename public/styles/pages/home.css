@@ -1,0 +1,70 @@
+.home-page {
+    padding-top: 0;
+}
+
+.home-page .hero {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.home-page .bg-video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 1;
+}
+
+.home-page .hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.35);
+    z-index: 2;
+}
+
+.home-page .hero-content {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    text-align: center;
+    color: #fff;
+}
+
+.home-page .hero-logo {
+    width: 250px;
+    margin-bottom: 18px;
+}
+
+.home-page .hero-content h1,
+.home-page .hero-content p {
+    font-family: 'Open Sans', Arial, sans-serif;
+    font-size: 36px;
+    font-weight: 100;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin: 0;
+}
+
+@media (max-width: 768px) {
+
+    .home-page .hero-logo {
+        width: 160px;
+        margin-bottom: 14px;
+    }
+
+    .home-page .hero-content h1,
+    .home-page .hero-content p {
+        font-size: 26px;
+        letter-spacing: 3px;
+    }
+}

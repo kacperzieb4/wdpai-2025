@@ -5,36 +5,71 @@
     <title>FINCH – Login</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link rel="stylesheet" href="public/styles/login.css">
-    <link rel="stylesheet" href="public/styles/header.css">
+    <!-- global -->
+    <link rel="stylesheet" href="/public/styles/base.css">
+    <link rel="stylesheet" href="/public/styles/layout.css">
+    <link rel="stylesheet" href="/public/styles/header.css">
+
+    <!-- page -->
+    <link rel="stylesheet" href="/public/styles/pages/login.css">
 </head>
-<body>
+
+<body class="login-page">
 
 <?php require __DIR__ . '/partials/header.php'; ?>
 
-<div class="bg-image"></div>
-<div class="overlay"></div>
+<main class="login-scene">
 
-<div class="login-box">
-    <img src="public/images/logo.png" class="login-logo">
+    <div class="login-bg"></div>
+    <div class="login-overlay"></div>
 
-    <?php if (isset($messages)): ?>
-        <div class="messages">
-            <?php foreach ($messages as $msg): ?>
-                <p><?= $msg ?></p>
-            <?php endforeach; ?>
-        </div>
-    <?php endif; ?>
+    <section class="login-panel">
 
-    <form method="POST" action="/login">
-        <input type="email" name="email" placeholder="email" required>
-        <input type="password" name="password" placeholder="password" required>
-        <button type="submit">Login</button>
-    </form>
-    <p class="activate-link">
-    <a href="/register">Activate your account here!</a>
-</p>
-</div>
+        <img
+            src="/public/images/logo.png"
+            alt="FINCH MEDIA"
+            class="login-logo"
+        >
+
+        <?php if (!empty($messages)): ?>
+            <div class="login-messages">
+                <?php foreach ($messages as $msg): ?>
+                    <p><?= htmlspecialchars($msg) ?></p>
+                <?php endforeach; ?>
+            </div>
+        <?php endif; ?>
+
+        <form method="POST" action="/login" class="login-form">
+
+            <input
+                type="email"
+                name="email"
+                class="login-input"
+                placeholder="email"
+                required
+            >
+
+            <input
+                type="password"
+                name="password"
+                class="login-input"
+                placeholder="password"
+                required
+            >
+
+            <button type="submit" class="login-button">
+                Login
+            </button>
+
+        </form>
+
+        <p class="login-activate">
+            <a href="/register">Activate your account here!</a>
+        </p>
+
+    </section>
+
+</main>
 
 </body>
 </html>

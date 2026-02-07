@@ -5,31 +5,30 @@
     <title>Edit assignment</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link rel="stylesheet" href="/public/styles/dashboard.css">
-    <link rel="stylesheet" href="/public/styles/create-user.css">
+    <link rel="stylesheet" href="/public/styles/base.css">
+    <link rel="stylesheet" href="/public/styles/layout.css">
+    <link rel="stylesheet" href="/public/styles/components.css">
     <link rel="stylesheet" href="/public/styles/header.css">
 </head>
 <body>
 
 <?php require __DIR__ . '/partials/header.php'; ?>
 
-<main class="content">
+<main class="main main--center">
 
     <h1 class="page-title">Edit assignment</h1>
 
     <div class="card">
 
-        <form
-            method="POST"
-            action="/edit-assignment/<?= $assignment['id'] ?>"
-            enctype="multipart/form-data"
-        >
+        <form method="POST"
+              action="/edit-assignment/<?= $assignment['id'] ?>"
+              enctype="multipart/form-data">
 
             <input
                 type="text"
                 name="title"
-                placeholder="Assignment title"
                 value="<?= htmlspecialchars($assignment['title']) ?>"
+                placeholder="Assignment title"
                 required
             >
 
@@ -38,6 +37,13 @@
                 placeholder="Assignment description (optional)"
                 rows="4"
             ><?= htmlspecialchars($assignment['description'] ?? '') ?></textarea>
+
+            <div class="file-info">
+                <strong>Current video:</strong>
+                <span class="file-name">
+                    <?= htmlspecialchars(basename($assignment['video_path'])) ?>
+                </span>
+            </div>
 
             <input
                 type="file"
@@ -53,21 +59,15 @@
             </div>
 
             <select name="company_id" required>
-                <option value="" disabled>
-                    Select company
-                </option>
-
                 <?php foreach ($companies as $c): ?>
-                    <option
-                        value="<?= $c['id'] ?>"
-                        <?= $c['id'] == $assignment['company_id'] ? 'selected' : '' ?>
-                    >
+                    <option value="<?= $c['id'] ?>"
+                        <?= $c['id'] == $assignment['company_id'] ? 'selected' : '' ?>>
                         <?= htmlspecialchars($c['name']) ?>
                     </option>
                 <?php endforeach; ?>
             </select>
 
-            <button type="submit" class="btn-primary">
+            <button type="submit" class="btn btn--primary btn--block">
                 Save changes
             </button>
 
@@ -77,46 +77,7 @@
 
 </main>
 
+<script src="/public/scripts/upload.js"></script>
+
 </body>
 </html>
-
-<script>
-const form = document.querySelector('form');
-const uploadBox = document.getElementById('uploadBox');
-const progressBar = document.getElementById('uploadProgress');
-const percentText = document.getElementById('uploadPercent');
-
-form.addEventListener('submit', function (e) {
-    const fileInput = form.querySelector('input[type="file"]');
-
-    if (!fileInput || !fileInput.files.length) {
-        return;
-    }
-
-    e.preventDefault();
-
-    const xhr = new XMLHttpRequest();
-    const formData = new FormData(form);
-
-    uploadBox.style.display = 'block';
-
-    xhr.upload.addEventListener('progress', function (e) {
-        if (e.lengthComputable) {
-            const percent = Math.round((e.loaded / e.total) * 100);
-            progressBar.style.width = percent + '%';
-            percentText.textContent = percent + '%';
-        }
-    });
-
-    xhr.addEventListener('load', function () {
-        if (xhr.status === 200) {
-            window.location.href = '/assignments';
-        } else {
-            alert('Upload failed');
-        }
-    });
-
-    xhr.open('POST', window.location.href);
-    xhr.send(formData);
-});
-</script>

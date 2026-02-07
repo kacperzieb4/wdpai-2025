@@ -5,16 +5,19 @@
     <title>FINCH – Dashboard</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link rel="stylesheet" href="/public/styles/dashboard.css">
+    <link rel="stylesheet" href="/public/styles/base.css">
+    <link rel="stylesheet" href="/public/styles/layout.css">
+    <link rel="stylesheet" href="/public/styles/components.css">
     <link rel="stylesheet" href="/public/styles/header.css">
+    <link rel="stylesheet" href="/public/styles/home.css">
 </head>
 <body>
 
 <?php require __DIR__ . '/partials/header.php'; ?>
 
-<main class="content">
+<main class="main main--center">
 
-    <h1>Hi, <?= htmlspecialchars($_SESSION['user_firstname']) ?>!</h1>
+    <h1 class="page-title">Hi, <?= htmlspecialchars($_SESSION['user_firstname']) ?>!</h1>
 
     <?php if ($_SESSION['user_role'] !== 'USER'): ?>
         <div class="admin-panel">
@@ -24,30 +27,37 @@
         </div>
     <?php endif; ?>
 
-    <h2>Your assignments:</h2>
+    <h2 class="section-title">Your assignments:</h2>
 
-    <div class="files-list">
+    <div class="list">
 
         <?php if (empty($assignments)): ?>
             <p>No assignments yet.</p>
         <?php endif; ?>
 
         <?php foreach ($assignments as $a): ?>
-            <div class="file-tile">
-                            <div class="file-info">
-                <span>🎬</span>
+            <div class="list-item">
 
-                <span class="file-name">
-                    <?= htmlspecialchars($a['title']) ?>
-                    <span class="company-inline">
-                        <?= htmlspecialchars($a['company'] ?? '— no company —') ?>
-                    </span>
-                </span>
-            </div>
+                <div class="list-item__main">
+                    <span class="list-item__icon">🎬</span>
 
-                <a href="/assignment/<?= $a['id'] ?>" class="watch-btn">
-                    Watch
-                </a>
+                    <div class="list-item__text">
+                        <span class="list-item__title">
+                            <?= htmlspecialchars($a['title']) ?>
+                        </span>
+
+                        <span class="list-item__meta">
+                            <?= htmlspecialchars($a['company'] ?? '— no company —') ?>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="list-item__actions">
+                    <a href="/assignment/<?= $a['id'] ?>" class="action-link">
+                        Watch
+                    </a>
+                </div>
+
             </div>
         <?php endforeach; ?>
 

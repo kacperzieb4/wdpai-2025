@@ -5,36 +5,37 @@
     <title>Create user</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link rel="stylesheet" href="/public/styles/dashboard.css">
-    <link rel="stylesheet" href="/public/styles/create-user.css">
+    <link rel="stylesheet" href="/public/styles/base.css">
+    <link rel="stylesheet" href="/public/styles/layout.css">
+    <link rel="stylesheet" href="/public/styles/components.css">
     <link rel="stylesheet" href="/public/styles/header.css">
 </head>
 <body>
 
 <?php require __DIR__ . '/partials/header.php'; ?>
 
-<main class="create-user-wrapper">
+<main class="main main--center">
 
-    <h1>Create user</h1>
+    <h1 class="page-title">Create user</h1>
 
     <?php if (!empty($successCode)): ?>
-        <div class="message-box">
-            User created successfully.<br>
+        <div class="card">
+            <strong>User created successfully.</strong><br><br>
             Activation code:
-            <div class="activation-code">
+            <div class="file-name" style="margin-top:8px;">
                 <?= htmlspecialchars($successCode) ?>
             </div>
         </div>
     <?php endif; ?>
 
     <?php if (!empty($error)): ?>
-        <div class="message-box error">
+        <div class="card" style="background:#ffdddd;">
             <?= htmlspecialchars($error) ?>
         </div>
     <?php endif; ?>
 
-    <div class="create-user-card">
-        <form method="POST" class="create-user-form">
+    <div class="card">
+        <form method="POST">
 
             <input
                 type="email"
@@ -81,28 +82,16 @@
                 <?php endforeach; ?>
             </select>
 
-            <button type="submit">Create user</button>
+            <button type="submit" class="btn btn--primary btn--block">
+                Create user
+            </button>
 
         </form>
     </div>
 
 </main>
 
-<script>
-const roleSelect = document.getElementById('roleSelect');
-const companySelect = document.getElementById('companySelect');
-
-function updateCompanyField() {
-    if (roleSelect.value === 'ADMIN' || roleSelect.value === 'MODERATOR') {
-        companySelect.value = '1';
-        companySelect.disabled = true;
-    } else {
-        companySelect.disabled = false;
-    }
-}
-
-roleSelect.addEventListener('change', updateCompanyField);
-</script>
+<script src="/public/scripts/user-role.js"></script>
 
 </body>
 </html>

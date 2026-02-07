@@ -2,7 +2,6 @@ const video = document.getElementById("assignmentVideo");
 const checkbox = document.getElementById("withTimestamp");
 const timestampInput = document.getElementById("timestampInput");
 
-/* TIMESTAMP WHEN ADDING COMMENT */
 if (video && checkbox && timestampInput) {
     checkbox.addEventListener("change", () => {
         if (!checkbox.checked) {

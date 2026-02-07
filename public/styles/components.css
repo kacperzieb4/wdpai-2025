@@ -1,0 +1,277 @@
+:root {
+    --field-padding-y: 14px;
+    --field-padding-x: 16px;
+    --field-radius: 10px;
+    --field-font-size: 16px;
+
+    --color-bg-light: #f5f5f5;
+    --color-bg-card: #e0e0e0;
+    --color-bg-button: #bdbdbd;
+    --color-bg-button-hover: #a9a9a9;
+
+    --color-text-main: #000;
+    --color-text-muted: #555;
+    --color-danger: red;
+}
+
+.page-title {
+    font-size: 48px;
+    margin-bottom: 30px;
+}
+
+.section-title {
+    font-size: 22px;
+    margin-top: 30px;
+}
+
+.card {
+    background: var(--color-bg-card);
+    border-radius: 16px;
+    padding: 24px;
+}
+
+.list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.tile {
+    background: var(--color-bg-card);
+    border-radius: 12px;
+    padding: 16px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+input[type="text"],
+input[type="file"],
+input[type="email"],
+textarea,
+select {
+    padding: var(--field-padding-y) var(--field-padding-x);
+    border-radius: var(--field-radius);
+    border: 1px solid #aaa;
+    font-size: var(--field-font-size);
+    background: var(--color-bg-light);
+}
+
+.btn {
+    appearance: none;
+    -webkit-appearance: none;
+
+    border: none !important;
+    border-radius: 10px;
+
+    padding: 8px 16px;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    background: var(--color-bg-button);
+    color: var(--color-text-main);
+
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    text-decoration: none !important;
+}
+
+.btn:hover {
+    background: var(--color-bg-button-hover);
+}
+
+form .btn {
+    padding: var(--field-padding-y) var(--field-padding-x);
+    font-size: var(--field-font-size);
+    background: #bdbdbd;
+}
+
+form .btn:hover {
+    background: #a9a9a9;
+}
+
+.btn--block {
+    width: 100%;
+    display: block;
+    text-align: center;
+    border-radius: 12px;
+}
+
+:not(form) > .btn--block {
+    background: var(--color-bg-card);
+}
+
+:not(form) > .btn--block:hover {
+    background: #d5d5d5;
+}
+
+.action-links {
+    display: flex;
+    align-items: center;
+}
+
+.action-link {
+    margin-left: 12px;
+    text-decoration: none;
+    font-weight: 600;
+    color: var(--color-text-main);
+    cursor: pointer;
+}
+
+.action-link:first-child {
+    margin-left: 0;
+}
+
+.action-link:hover {
+    opacity: 0.6;
+}
+
+.action-link--danger {
+    color: var(--color-danger);
+}
+
+.list-item {
+    background: var(--color-bg-card);
+    border-radius: 12px;
+    padding: 16px 20px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.list-item__main {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.list-item__icon {
+    font-size: 20px;
+}
+
+.list-item__title {
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.list-item__meta {
+    font-size: 13px;
+    color: #555;
+}
+
+.admin-tile {
+    display: block;
+    background: var(--color-bg-card);
+    padding: 20px;
+    border-radius: 12px;
+
+    text-decoration: none;
+    color: var(--color-text-main);
+    font-weight: 600;
+    text-align: center;
+}
+
+.admin-tile:hover {
+    background: #d5d5d5;
+}
+
+.admin-panel {
+    display: flex;
+    gap: 20px;
+}
+
+.admin-tile {
+    flex: 1;
+}
+
+textarea {
+    font-family: Arial, sans-serif;
+}
+
+.comment-edit-box {
+    display: none;
+}
+
+.comment.editing .comment-edit-box {
+    display: block;
+}
+
+.comment {
+    position: relative;
+}
+
+.comment .action-links {
+    position: absolute;
+    top: 50%;
+    right: 20px;
+    transform: translateY(-50%);
+
+    display: flex;
+    flex-direction: row;
+    gap: 14px;
+}
+
+.comment.editing .action-links {
+    display: none;
+}
+
+.comment.editing > p {
+    display: none;
+}
+
+.comment-edit-input {
+    width: 100%;
+    max-width: 420px;
+    box-sizing: border-box;
+}
+
+.comment-timestamp {
+    display: inline-flex;
+    align-items: center;
+    width: fit-content;
+}
+
+.comment-timestamp {
+    position: relative;
+    z-index: 1;
+}
+
+.comment .action-links {
+    z-index: 2;
+}
+
+.comment-timestamp {
+    margin-top: 10px;
+    margin-bottom: 6px;
+}
+
+.comment > p {
+    margin-top: 4px;
+}
+
+.comment {
+    margin-bottom: 20px;
+}
+
+.comment:last-child {
+    margin-bottom: 0;
+}
+
+.comment-timestamp + p {
+    margin-top: 4px;
+}
+
+.comment-header + p {
+    margin-top: 14px;
+}

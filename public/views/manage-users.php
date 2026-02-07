@@ -5,16 +5,19 @@
     <title>Manage users</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link rel="stylesheet" href="/public/styles/dashboard.css">
+    <link rel="stylesheet" href="/public/styles/base.css">
+    <link rel="stylesheet" href="/public/styles/layout.css">
+    <link rel="stylesheet" href="/public/styles/components.css">
     <link rel="stylesheet" href="/public/styles/header.css">
+    <link rel="stylesheet" href="/public/styles/home.css">
 </head>
 <body>
 
 <?php require __DIR__ . '/partials/header.php'; ?>
 
-<main class="content">
+<main class="main main--center">
 
-    <h1>Users</h1>
+    <h1 class="page-title">Users</h1>
 
     <div class="admin-panel">
         <a href="/create-user" class="admin-tile">
@@ -22,51 +25,49 @@
         </a>
     </div>
 
-    <h2>User list:</h2>
+    <h2 class="section-title">User list:</h2>
 
-    <div class="files-list">
+    <div class="list">
         <?php foreach ($users as $u): ?>
 
             <?php
                 $currentUserId = $_SESSION['user_id'];
                 $currentRole   = $_SESSION['user_role'];
                 $targetRole    = $u['role'];
+                $isSelf        = $u['id'] == $currentUserId;
             ?>
 
-            <div class="file-tile">
-                <div class="file-info">
-                    <span>👤</span>
+            <div class="list-item">
 
-                    <span class="file-name">
-                        <?= htmlspecialchars($u['firstname']) ?>
-                        <?= htmlspecialchars($u['lastname']) ?>
+                <div class="list-item__main">
+                    <span class="list-item__icon">👤</span>
 
-                        <?php if (!empty($u['role'])): ?>
-                            <span class="role-badge <?= strtolower($u['role']) ?>">
-                                <?= htmlspecialchars($u['role']) ?>
-                            </span>
-                        <?php endif; ?>
-                    </span>
+                    <div class="list-item__text">
+                        <span class="list-item__title">
+                            <?= htmlspecialchars($u['firstname']) ?>
+                            <?= htmlspecialchars($u['lastname']) ?>
 
-                    <small>
-                        <?= $u['company'] ?? '— no company —' ?>
-                    </small>
+                            <?php if (!empty($u['role'])): ?>
+                                <span class="role-badge <?= strtolower($u['role']) ?>">
+                                    <?= htmlspecialchars($u['role']) ?>
+                                </span>
+                            <?php endif; ?>
+                        </span>
+
+                        <span class="list-item__meta">
+                            <?= htmlspecialchars($u['company'] ?? '— no company —') ?>
+                        </span>
+                    </div>
                 </div>
 
-               <div class="file-actions">
-                    <?php
-                        $currentUserId = $_SESSION['user_id'];
-                        $currentRole   = $_SESSION['user_role'];
-                        $targetRole    = $u['role'];
-                        $isSelf        = $u['id'] == $currentUserId;
-                    ?>
+                <div class="list-item__actions">
 
                     <?php if (
-                        $currentRole === 'ADMIN'
+                        ($currentRole === 'ADMIN')
                         || ($currentRole === 'MODERATOR' && $targetRole === 'USER')
                     ): ?>
                         <?php if (!$isSelf): ?>
-                            <a href="/edit-user/<?= $u['id'] ?>" class="watch-btn">
+                            <a href="/edit-user/<?= $u['id'] ?>" class="action-link">
                                 Edit
                             </a>
                         <?php endif; ?>
@@ -79,7 +80,8 @@
                             || ($currentRole === 'MODERATOR' && $targetRole === 'USER')
                         )
                     ): ?>
-                        <a href="/delete-user/<?= $u['id'] ?>" class="watch-btn">
+                        <a href="/delete-user/<?= $u['id'] ?>"
+                        class="action-link action-link--danger">
                             Delete
                         </a>
                     <?php endif; ?>
@@ -90,6 +92,7 @@
 
         <?php endforeach; ?>
     </div>
+
 
 </main>
 

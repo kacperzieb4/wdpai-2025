@@ -4,17 +4,20 @@
     <meta charset="UTF-8">
     <title>Assignments</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <link rel="stylesheet" href="/public/styles/dashboard.css">
+
+    <link rel="stylesheet" href="/public/styles/base.css">
+    <link rel="stylesheet" href="/public/styles/layout.css">
+    <link rel="stylesheet" href="/public/styles/components.css">
     <link rel="stylesheet" href="/public/styles/header.css">
+    <link rel="stylesheet" href="/public/styles/home.css">
 </head>
 <body>
 
 <?php require __DIR__ . '/partials/header.php'; ?>
 
-<main class="content">
+<main class="main main--center">
 
-    <h1>Assignments</h1>
+    <h1 class="page-title">Assignments</h1>
 
     <?php if ($_SESSION['user_role'] !== 'USER'): ?>
         <div class="admin-panel">
@@ -24,12 +27,12 @@
         </div>
     <?php endif; ?>
 
-    <h2>Assignments list:</h2>
+    <h2 class="section-title">Assignments list:</h2>
 
-    <div class="files-list">
+    <div class="list">
     <?php foreach ($assignments as $a): ?>
 
-        <div class="file-tile">
+        <div class="tile">
             <div class="file-info">
                 <span>🎬</span>
 
@@ -42,17 +45,17 @@
             </div>
 
             <div class="file-actions">
-                <a href="/assignment/<?= $a['id'] ?>" class="watch-btn">
+                <a href="/assignment/<?= $a['id'] ?>" class="action-link">
                     View
                 </a>
 
                 <?php if ($_SESSION['user_role'] !== 'USER'): ?>
-                    <a href="/edit-assignment/<?= $a['id'] ?>" class="watch-btn">
+                    <a href="/edit-assignment/<?= $a['id'] ?>" class="action-link">
                         Edit
                     </a>
 
                     <a href="/delete-assignment/<?= $a['id'] ?>"
-                       class="watch-btn danger">
+                       class="action-link action-link--danger">
                         Delete
                     </a>
                 <?php endif; ?>

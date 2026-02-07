@@ -1,0 +1,125 @@
+body.login-page {
+    margin: 0;
+    background: #000;
+    font-family: Arial, sans-serif;
+}
+
+.login-scene {
+    position: relative;
+    height: calc(100vh - 60px);
+    margin-top: 60px;
+    overflow: hidden;
+}
+
+.login-bg {
+    position: absolute;
+    inset: 0;
+    background: url("/public/images/login-bg.png") center / cover no-repeat;
+    z-index: 1;
+}
+
+.login-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    z-index: 2;
+}
+
+.login-panel {
+    position: relative;
+    z-index: 3;
+
+    height: 100%;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    text-align: center;
+    color: #fff;
+}
+
+.login-logo {
+    width: 130px;
+    margin-bottom: 24px;
+}
+
+.login-messages {
+    margin-bottom: 14px;
+}
+
+.login-messages p {
+    margin: 0 0 6px;
+    font-size: 13px;
+    color: #ffb3b3;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.login-input {
+    width: 260px;
+    padding: 12px 14px;
+
+    border-radius: 8px;
+    border: none;
+
+    font-size: 14px;
+    background: rgba(255, 255, 255, 0.85);
+    color: #000;
+}
+
+.login-input::placeholder {
+    color: #666;
+}
+
+.login-button {
+    width: 260px;
+    padding: 12px;
+
+    border-radius: 8px;
+    border: none;
+
+    background: #5f5f5f;
+    color: #fff;
+
+    font-size: 14px;
+    font-weight: 550;
+    cursor: pointer;
+}
+
+.login-button:hover {
+    background: #4a4a4a;
+}
+
+.login-activate {
+    margin-top: 18px;
+    font-size: 14px;
+}
+
+.login-activate a {
+    color: #fff;
+    text-decoration: none;
+    opacity: 0.9;
+}
+
+.login-activate a:hover {
+    text-decoration: underline;
+    opacity: 1;
+}
+
+@media (max-width: 768px) {
+
+    .login-logo {
+        width: 110px;
+    }
+
+    .login-input,
+    .login-button {
+        width: 220px;
+    }
+}
