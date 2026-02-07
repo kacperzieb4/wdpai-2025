@@ -24,10 +24,7 @@ class AssignmentViewController extends AppController
 
     public function view($id)
     {
-        if (!isset($_SESSION['user_id'])) {
-            header('Location: /login');
-            exit;
-        }
+        $this->requireLogin();
 
         $assignment = $this->assignmentRepository->getAssignment((int)$id);
         if (!$assignment) {

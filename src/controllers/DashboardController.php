@@ -15,10 +15,7 @@ class DashboardController extends AppController
 
     public function index()
     {
-        if (!isset($_SESSION['user_id'])) {
-            header("Location: /login");
-            exit;
-        }
+        $this->requireLogin();
 
         if (
             $_SESSION['user_role'] === 'ADMIN'

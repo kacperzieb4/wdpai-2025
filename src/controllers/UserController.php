@@ -21,45 +21,62 @@ class UserController extends AppController
 
     public function create()
     {
+        $this->requireLogin();
+
+        if ($_SESSION['user_role'] === 'USER') {
+            $this->error(
+                403,
+                'Access denied',
+                'You are not allowed to create users.'
+            );
+        }
+
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             $companies = $this->companyRepository->getAll();
             $roles = ['ADMIN', 'MODERATOR', 'USER'];
-
-            require_once 'public/views/create-user.php';
+            require 'public/views/create-user.php';
             return;
         }
 
-        $email = trim($_POST['email']);
+        $email     = trim($_POST['email']);
         $firstname = trim($_POST['firstname']);
-        $lastname = trim($_POST['lastname']);
+        $lastname  = trim($_POST['lastname']);
 
-        if (!isset($_POST['role'])) {
+        if (empty($_POST['role'])) {
             $error = 'Role is required';
             $companies = $this->companyRepository->getAll();
             $roles = ['ADMIN', 'MODERATOR', 'USER'];
-            require_once 'public/views/create-user.php';
+            require 'public/views/create-user.php';
             return;
         }
 
         $roleName = $_POST['role'];
-        $roleId = $this->userRepository->getRoleIdByName($roleName);
+        $roleId   = $this->userRepository->getRoleIdByName($roleName);
 
         if (!$roleId) {
             $error = 'Invalid role';
             $companies = $this->companyRepository->getAll();
             $roles = ['ADMIN', 'MODERATOR', 'USER'];
-            require_once 'public/views/create-user.php';
+            require 'public/views/create-user.php';
+            return;
+        }
+
+        if ($_SESSION['user_role'] === 'MODERATOR' && $roleName === 'ADMIN') {
+            $error = 'You are not allowed to create admin users.';
+            $companies = $this->companyRepository->getAll();
+            $roles = ['ADMIN', 'MODERATOR', 'USER'];
+            require 'public/views/create-user.php';
             return;
         }
 
         if ($roleName === 'ADMIN' || $roleName === 'MODERATOR') {
-            $companyId = 1; 
+            $companyId = 1;
         } else {
             if (empty($_POST['company'])) {
                 $error = 'Company is required';
                 $companies = $this->companyRepository->getAll();
                 $roles = ['ADMIN', 'MODERATOR', 'USER'];
-                require_once 'public/views/create-user.php';
+                require 'public/views/create-user.php';
                 return;
             }
             $companyId = (int) $_POST['company'];
@@ -67,14 +84,6 @@ class UserController extends AppController
 
         if ($this->userRepository->getUserByEmail($email)) {
             $error = 'User with this email already exists';
-            $companies = $this->companyRepository->getAll();
-            $roles = ['ADMIN', 'MODERATOR', 'USER'];
-            require_once 'public/views/create-user.php';
-            return;
-        }
-
-       if ($_SESSION['user_role'] === 'MODERATOR' && $roleName === 'ADMIN') {
-            $error = 'You are not allowed to create admin users.';
             $companies = $this->companyRepository->getAll();
             $roles = ['ADMIN', 'MODERATOR', 'USER'];
             require 'public/views/create-user.php';
@@ -96,12 +105,14 @@ class UserController extends AppController
         $companies = $this->companyRepository->getAll();
         $roles = ['ADMIN', 'MODERATOR', 'USER'];
 
-        require_once 'public/views/create-user.php';
+        require 'public/views/create-user.php';
     }
 
     public function index()
     {
-        if (!isset($_SESSION['user_role']) || $_SESSION['user_role'] === 'USER') {
+        $this->requireLogin();
+
+        if ($_SESSION['user_role'] === 'USER') {
             $this->error(
                 403,
                 'Access denied',
@@ -115,16 +126,18 @@ class UserController extends AppController
 
     public function edit(int $id)
     {
-        $user = $this->userRepository->getById($id);
-        if (!$user) {
-            $this->error(
-                404,
-                'User not found',
-                'The requested user does not exist.'
-            );
+        $this->requireLogin();
+
+        if ($_SESSION['user_role'] === 'USER') {
+            $this->error(403, 'Access denied', 'You cannot edit users.');
         }
 
-        $roles = $this->roleRepository->getAll();
+        $user = $this->userRepository->getById($id);
+        if (!$user) {
+            $this->error(404, 'User not found', 'The requested user does not exist.');
+        }
+
+        $roles     = $this->roleRepository->getAll();
         $companies = $this->companyRepository->getAll();
 
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -133,8 +146,8 @@ class UserController extends AppController
         }
 
         $firstname = trim($_POST['firstname']);
-        $lastname = trim($_POST['lastname']);
-        $roleId = (int) $_POST['role_id'];
+        $lastname  = trim($_POST['lastname']);
+        $roleId    = (int) $_POST['role_id'];
         $companyId = $_POST['company_id'] ?? null;
 
         $roleName = null;
@@ -172,7 +185,7 @@ class UserController extends AppController
             $firstname,
             $lastname,
             $roleId,
-            (int) $companyId
+            (int)$companyId
         );
 
         header('Location: /manage-users');
@@ -181,67 +194,46 @@ class UserController extends AppController
 
     public function delete($id)
     {
-        if (!isset($_SESSION['user_id'], $_SESSION['user_role'])) {
-            $this->error(
-                403,
-                'Access denied',
-                'You are not allowed to access this resource.'
-            );
+        $this->requireLogin();
+
+        if ($_SESSION['user_role'] === 'USER') {
+            $this->error(403, 'Access denied', 'You cannot delete users.');
         }
 
         $id = (int)$id;
 
         if ($id === (int)$_SESSION['user_id']) {
-            $this->error(
-                403,
-                'Access denied',
-                'You cannot delete your own account.'
-            );
+            $this->error(403, 'Access denied', 'You cannot delete your own account.');
         }
 
         $userToDelete = $this->userRepository->getById($id);
         if (!$userToDelete) {
-            $this->error(
-                404,
-                'User not found',
-                'The requested user does not exist.'
-            );
-            return;
+            $this->error(404, 'User not found', 'The requested user does not exist.');
         }
 
-        $currentRole = $_SESSION['user_role'];
-        $targetRoleId = $userToDelete['role_id'];
+        $targetRole = $this->roleRepository
+            ->getById($userToDelete['role_id'])['name'];
 
-        if ($currentRole === 'ADMIN') {
+        if (
+            $_SESSION['user_role'] === 'ADMIN' ||
+            ($_SESSION['user_role'] === 'MODERATOR' && $targetRole === 'USER')
+        ) {
             $this->userRepository->deleteUser($id);
             header('Location: /manage-users');
             exit;
         }
 
-        $targetRole = $this->roleRepository->getById($userToDelete['role_id'])['name'];
-        if ($currentRole === 'MODERATOR' && $targetRole === 'USER') {
-            $this->userRepository->deleteUser($id);
-        }
-
-        $this->error(
-            403,
-            'Access denied',
-            'You cannot delete this user.'
-        );
+        $this->error(403, 'Access denied', 'You cannot delete this user.');
     }
 
     public function changePassword()
     {
-        if (!isset($_SESSION['user_id'])) {
-            header('Location: /login');
-            exit;
-        }
+        $this->requireLogin();
 
         $error = null;
         $success = null;
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
             $currentPassword = $_POST['current_password'] ?? '';
             $newPassword     = $_POST['new_password'] ?? '';
             $repeatPassword  = $_POST['new_password_repeat'] ?? '';
@@ -277,6 +269,4 @@ class UserController extends AppController
 
         require 'public/views/change-password.php';
     }
-
-
 }

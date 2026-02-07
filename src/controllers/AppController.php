@@ -21,11 +21,15 @@ class AppController {
 
     protected function requireLogin(): void
     {
-        if (empty($_SESSION['user_id'])) {
+        if (
+            empty($_SESSION['is_logged_in']) ||
+            empty($_SESSION['user_id'])
+        ) {
             header("Location: /login");
             exit();
         }
     }
+
 
     protected function render(string $template = null, array $variables = [])
     {
