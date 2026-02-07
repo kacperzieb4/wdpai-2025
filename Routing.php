@@ -131,6 +131,11 @@ class Routing
             case 'admin':
                 (new AdminController())->index();
                 break;
+            
+            case 'change-password':
+                (new UserController())->changePassword();
+                break;
+
 
             default:
                 self::error(

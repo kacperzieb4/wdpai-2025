@@ -230,6 +230,53 @@ class UserController extends AppController
         );
     }
 
+    public function changePassword()
+    {
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: /login');
+            exit;
+        }
+
+        $error = null;
+        $success = null;
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+            $currentPassword = $_POST['current_password'] ?? '';
+            $newPassword     = $_POST['new_password'] ?? '';
+            $repeatPassword  = $_POST['new_password_repeat'] ?? '';
+
+            if ($newPassword !== $repeatPassword) {
+                $error = 'New passwords do not match.';
+            } elseif (strlen($newPassword) < 6) {
+                $error = 'Password must be at least 6 characters long.';
+            } else {
+                $db = (new Database())->connect();
+
+                $stmt = $db->prepare('SELECT password FROM users WHERE id = :id');
+                $stmt->execute(['id' => $_SESSION['user_id']]);
+                $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                if (!$user || !password_verify($currentPassword, $user['password'])) {
+                    $error = 'Current password is incorrect.';
+                } else {
+                    $hash = password_hash($newPassword, PASSWORD_BCRYPT);
+
+                    $update = $db->prepare(
+                        'UPDATE users SET password = :password WHERE id = :id'
+                    );
+                    $update->execute([
+                        'password' => $hash,
+                        'id' => $_SESSION['user_id']
+                    ]);
+
+                    $success = 'Password changed successfully.';
+                }
+            }
+        }
+
+        require 'public/views/change-password.php';
+    }
 
 
 }

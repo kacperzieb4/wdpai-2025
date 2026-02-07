@@ -320,6 +320,15 @@ button:active,
     filter: none;
 }
 
+form input[type="password"] {
+    width: 100%;
+    padding: var(--field-padding-y) var(--field-padding-x);
+    border-radius: var(--field-radius);
+    border: 1px solid #aaa;
+    background: var(--color-bg-light);
+    font-size: var(--field-font-size);
+}
+
 @media (max-width: 768px) {
 
     .admin-panel {
