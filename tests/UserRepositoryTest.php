@@ -3,7 +3,7 @@
 use PHPUnit\Framework\TestCase;
 
 require_once __DIR__ . '/../src/repository/UserRepository.php';
-require_once __DIR__ . '/../src/Database.php';
+require_once __DIR__ . '/../Database.php';
 
 class UserRepositoryTest extends TestCase
 {
